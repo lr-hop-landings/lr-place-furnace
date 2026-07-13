@@ -341,8 +341,8 @@ const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
     max-width: 1040px;
   }
 
-  .social-links-cards__strip-header {
-    max-width: 640px;
+  .social-links-cards--qr-strip .social-links-cards__strip-header {
+    max-width: 1040px;
     margin: 0 auto 42px;
     text-align: center;
   }
@@ -360,9 +360,11 @@ const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
   .social-links-cards__strip-title em {
     color: var(--color-accent, #e76525);
     font: inherit;
+    text-transform: none;
   }
 
   .social-links-cards--qr-strip .social-links-cards__strip-header p {
+    max-width: 640px;
     margin: var(--space-4, 16px) auto 0;
     color: var(--color-text-muted, #60717d);
     font-size: clamp(16px, 1.6vw, 18px);
@@ -440,7 +442,7 @@ const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
       padding: 48px var(--space-4, 16px) 56px;
     }
 
-    .social-links-cards__strip-header {
+    .social-links-cards--qr-strip .social-links-cards__strip-header {
       margin-bottom: 30px;
     }
 
