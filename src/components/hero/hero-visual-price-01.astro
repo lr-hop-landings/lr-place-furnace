@@ -28,9 +28,19 @@ const {
   imageAlt = "",
   backgroundImageSrc,
 } = Astro.props;
+
+const callouts = [
+  { label: "Защита стены", position: "wall" },
+  { label: "Дымоход", position: "chimney" },
+  { label: "Основание", position: "base" },
+];
 ---
 
-<section class="hero-visual" style={backgroundImageSrc ? `--hero-bg-image: url("${backgroundImageSrc}")` : undefined}>
+<section
+  class="hero-visual"
+  data-hero-enhanced
+  style={backgroundImageSrc ? `--hero-bg-image: url("${backgroundImageSrc}")` : undefined}
+>
   <div class="hero-visual__inner">
     <div class="hero-visual__content">
       {priceBadge && <a class="hero-visual__badge" href={ctaHref}>{priceBadge}</a>}
@@ -49,23 +59,40 @@ const {
         </ul>
       )}
     </div>
-    {imageSrc ? (
-      <a class="hero-visual__media glightbox" href={imageSrc} data-gallery="hero-visual" data-title={headline} aria-label={imageAlt || "Открыть изображение первого экрана"}>
-        <img src={imageSrc} alt={imageAlt} loading="eager" />
-      </a>
-    ) : (
-      <div class="hero-visual__media" aria-label="Инженерная схема установки металлической печи">
-        <div class="hero-visual__blueprint" aria-hidden="true">
-          <span class="hero-visual__blueprint-label">Согласованный монтажный узел</span>
-          <div class="hero-visual__chimney"><i></i><i></i><i></i></div>
-          <div class="hero-visual__stove"><b></b><span></span></div>
-          <div class="hero-visual__floor"></div>
-          <small class="hero-visual__note hero-visual__note--one">дымоход</small>
-          <small class="hero-visual__note hero-visual__note--two">защита стены</small>
-          <small class="hero-visual__note hero-visual__note--three">основание</small>
+    <div class="hero-visual__media-shell">
+      {imageSrc ? (
+        <a class="hero-visual__media glightbox" href={imageSrc} data-gallery="hero-visual" data-title={headline} aria-label={imageAlt || "Открыть изображение первого экрана"}>
+          <img
+            src={imageSrc}
+            alt={imageAlt}
+            width="1280"
+            height="1600"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </a>
+      ) : (
+        <div class="hero-visual__media" aria-label="Инженерная схема установки металлической печи">
+          <div class="hero-visual__blueprint" aria-hidden="true">
+            <span class="hero-visual__blueprint-label">Согласованный монтажный узел</span>
+            <div class="hero-visual__chimney"><i></i><i></i><i></i></div>
+            <div class="hero-visual__stove"><b></b><span></span></div>
+            <div class="hero-visual__floor"></div>
+            <small class="hero-visual__note hero-visual__note--one">дымоход</small>
+            <small class="hero-visual__note hero-visual__note--two">защита стены</small>
+            <small class="hero-visual__note hero-visual__note--three">основание</small>
+          </div>
         </div>
-      </div>
-    )}
+      )}
+      <ul class="hero-visual__callouts" aria-label="Ключевые элементы монтажного узла">
+        {callouts.map((callout) => (
+          <li class={`hero-visual__callout hero-visual__callout--${callout.position}`}>
+            {callout.label}
+          </li>
+        ))}
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -201,6 +228,17 @@ const {
   .hero-visual__media {
     color: inherit;
     text-decoration: none;
+  }
+
+  .hero-visual__media-shell {
+    position: relative;
+    min-width: 0;
+  }
+
+  .hero-visual__callouts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   .hero-visual__media img {
