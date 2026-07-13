@@ -6,6 +6,7 @@ graphify-out/
 .astro/
 .fix-backup/
 .superpowers/
+.worktrees/
 
 # dependencies
 node_modules/
