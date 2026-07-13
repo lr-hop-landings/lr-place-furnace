@@ -33,6 +33,7 @@ async function verifyStructure() {
   check(parent.includes('instance="modal"'), "modal quiz form is missing");
   check(child.includes("data-quiz-form"), "shared quiz form marker is missing");
   check(child.includes("data-file-summary"), "shared file summary is missing");
+  check(child.includes("lead-quiz-form__file-picker"), "custom file picker is missing");
   check(!parent.includes("const initLeadQuiz"), "component still duplicates the quiz controller");
   check(site.includes("interface QuizState"), "shared QuizState is missing");
   check(site.includes("formdata"), "shared file FormData handling is missing");
@@ -150,6 +151,7 @@ async function verifyLayout() {
   await desktop.addStyleTag({ content: "astro-dev-toolbar { display: none !important; }" });
   await focusOutline(desktop, "[data-quiz-open]", "modal opener needs a visible focus outline");
   await focusOutline(desktop, `${inlineForm} [name="object_type"]`, "quiz option needs a visible focus outline");
+  await desktop.evaluate(() => (document.activeElement instanceof HTMLElement) && document.activeElement.blur());
   await desktop.locator(".lead-quiz").screenshot({ path: "artifacts/quiz-inline-desktop.png" });
   await desktop.locator("[data-quiz-open]").click();
   await focusOutline(desktop, "[data-quiz-close]", "modal close needs a visible focus outline");
@@ -167,6 +169,7 @@ async function verifyLayout() {
   await mobile.keyboard.press("Escape");
   await reachContactStep(mobile);
   await focusOutline(mobile, `${inlineForm} [data-quiz-submit]`, "quiz primary action needs a visible focus outline");
+  await mobile.evaluate(() => (document.activeElement instanceof HTMLElement) && document.activeElement.blur());
   await mobile.locator('[data-quiz-view="inline"]').screenshot({ path: "artifacts/quiz-contact-mobile.png" });
   await mobile.close();
 }

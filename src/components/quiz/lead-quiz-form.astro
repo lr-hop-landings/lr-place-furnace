@@ -113,17 +113,21 @@ const totalSteps = steps.length + 1;
           <input id={`${prefix}-stove-model`} type="text" name="stove_model" placeholder="Название или модель" />
         </label>
 
-        <label for={`${prefix}-photos`}>
+        <label class="lead-quiz-form__file-field" for={`${prefix}-photos`}>
           <span>Фотографии</span>
           <input
             id={`${prefix}-photos`}
+            class="lead-quiz-form__file-input"
             type="file"
             name="photos[]"
             data-file-input
             multiple
             accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
           />
-          <small data-file-summary>Файлы не выбраны</small>
+          <span class="lead-quiz-form__file-picker" aria-hidden="true">
+            <strong>Выбрать фотографии</strong>
+            <small data-file-summary>Файлы не выбраны</small>
+          </span>
         </label>
 
         <fieldset class="lead-quiz-form__contact-method">
@@ -307,10 +311,49 @@ const totalSteps = steps.length + 1;
     font: inherit;
   }
 
-  .lead-quiz-form input[type="file"] { padding: 9px; }
   .lead-quiz-form textarea { min-height: 100px; resize: vertical; }
 
-  .lead-quiz-form small[data-file-summary] {
+  .lead-quiz-form input.lead-quiz-form__file-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    opacity: 0;
+  }
+
+  .lead-quiz-form__file-picker {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    min-height: 52px;
+    padding: 7px;
+    border: 1px solid var(--color-border, #d6dee3);
+    border-radius: 12px;
+    background: #ffffff;
+    cursor: pointer;
+  }
+
+  .lead-quiz-form__file-picker strong {
+    display: grid;
+    min-height: 38px;
+    padding: 0 12px;
+    place-items: center;
+    border-radius: 9px;
+    color: #ffffff;
+    background: var(--color-primary-dark, #0b1f33);
+    font-size: 12px;
+  }
+
+  .lead-quiz-form__file-field:focus-within .lead-quiz-form__file-picker {
+    outline: 3px solid var(--color-accent, #e76525);
+    outline-offset: 3px;
+  }
+
+  .lead-quiz-form__file-picker small[data-file-summary] {
     overflow-wrap: anywhere;
     color: var(--color-text-muted, #60717d);
     font-size: 11px;
@@ -388,8 +431,11 @@ const totalSteps = steps.length + 1;
     color: var(--color-text, #152028);
   }
 
+  .lead-quiz-form button:focus,
   .lead-quiz-form button:focus-visible,
+  .lead-quiz-form input:focus,
   .lead-quiz-form input:focus-visible,
+  .lead-quiz-form textarea:focus,
   .lead-quiz-form textarea:focus-visible,
   .lead-quiz-form__option:focus-within {
     outline: 3px solid var(--color-accent, #e76525);
@@ -432,6 +478,7 @@ const totalSteps = steps.length + 1;
     }
     .lead-quiz-form__contact-method,
     .lead-quiz-form__consent { grid-column: auto; }
+    .lead-quiz-form__file-picker { grid-template-columns: 1fr; }
     .lead-quiz-form__actions button { flex: 1; }
   }
 
