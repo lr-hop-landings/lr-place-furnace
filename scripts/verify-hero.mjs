@@ -52,8 +52,63 @@ async function verifyContent() {
 
 await verifyContent();
 
+async function verifyLayout() {
+  await mkdir("artifacts", { recursive: true });
+
+  const desktop = await openPage(1440, 1000);
+  const desktopContent = await desktop.locator(".hero-visual__content").boundingBox();
+  const desktopMedia = await desktop.locator(".hero-visual__media-shell").boundingBox();
+  const desktopFactStyle = await desktop.locator(".hero-visual__pills li").first().evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { borderLeftWidth: style.borderLeftWidth, boxShadow: style.boxShadow };
+  });
+
+  check(desktopContent && desktopMedia && desktopContent.x < desktopMedia.x, "desktop content must remain left of media");
+  check(desktopContent && desktopMedia && desktopContent.width > desktopMedia.width, "desktop content column must be wider than media");
+  check(desktopFactStyle.borderLeftWidth !== "0px", "benefit facts need a visible left rule");
+  check(desktopFactStyle.boxShadow === "none", "benefit facts must not use the old hard shadow");
+  const desktopButton = await desktop.locator(".hero-visual__button").boundingBox();
+  check(desktopButton && desktopButton.y + desktopButton.height < 1000, "primary CTA must remain in the desktop viewport");
+  await desktop.locator(".hero-visual__button").focus();
+  const focusOutline = await desktop.locator(".hero-visual__button").evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { style: style.outlineStyle, width: Number.parseFloat(style.outlineWidth) };
+  });
+  check(focusOutline.style !== "none" && focusOutline.width >= 3, "primary CTA needs a visible keyboard focus outline");
+  await desktop.screenshot({ path: "artifacts/hero-desktop.png", fullPage: false });
+  await desktop.close();
+
+  const mobile = await openPage(390, 844);
+  const mobileContent = await mobile.locator(".hero-visual__content").boundingBox();
+  const mobileMedia = await mobile.locator(".hero-visual__media-shell").boundingBox();
+  const mobileButton = await mobile.locator(".hero-visual__button").boundingBox();
+  const mobileImageFit = await mobile.locator(".hero-visual__media img").evaluate((element) => getComputedStyle(element).objectFit);
+  const mobileOverflow = await mobile.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+
+  check(mobileContent && mobileMedia && mobileMedia.y < mobileContent.y, "mobile media must render before copy");
+  check(mobileContent && mobileButton && mobileButton.width >= mobileContent.width * 0.95, "mobile CTA must span the content width");
+  check(mobileButton && mobileButton.y + mobileButton.height <= 844, "mobile CTA must fit within the first viewport");
+  check(mobileImageFit === "cover", "mobile image must crop with object-fit cover");
+  check(mobileOverflow <= 1, `mobile page overflows horizontally by ${mobileOverflow}px`);
+
+  await mobile.emulateMedia({ reducedMotion: "reduce" });
+  await mobile.reload({ waitUntil: "networkidle" });
+  const reducedMotion = await mobile.locator(".hero-visual__content").evaluate((element) => getComputedStyle(element).animationName);
+  check(reducedMotion === "none", "hero motion must be disabled for reduced-motion users");
+  await mobile.screenshot({ path: "artifacts/hero-mobile.png", fullPage: false });
+  await mobile.close();
+
+  for (const width of [360, 430]) {
+    const edgePhone = await openPage(width, 844);
+    const overflow = await edgePhone.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    check(overflow <= 1, `${width}px page overflows horizontally by ${overflow}px`);
+    check((await edgePhone.locator(".hero-visual__pills li").count()) === 4, `${width}px viewport lost a benefit fact`);
+    await edgePhone.close();
+  }
+}
+
 if (mode === "layout" || mode === "all") {
-  throw new Error("layout checks are added in Task 2");
+  await verifyLayout();
 }
 
 await browser.close();
@@ -63,4 +118,4 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log("Hero content verification passed");
+console.log(`Hero ${mode} verification passed`);
