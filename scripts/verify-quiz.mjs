@@ -92,6 +92,8 @@ async function verifyBehavior() {
   await page.keyboard.press("Escape");
   check((await modal.getAttribute("aria-hidden")) === "true", "Escape did not close modal");
   check(await opener.evaluate((element) => document.activeElement === element), "focus did not return to modal opener");
+  const sectionHeightClosed = await root.evaluate((element) => element.getBoundingClientRect().height);
+  check(Math.abs(sectionHeightClosed - sectionHeightBefore) <= 1, `closing modal changed section height by ${sectionHeightClosed - sectionHeightBefore}px`);
 
   await page.locator(`${inlineForm} [data-quiz-next]`).click();
   await chooseAndAdvance(page, inlineForm, "stove_status", "Уже куплена");
@@ -128,8 +130,6 @@ async function verifyBehavior() {
   const submitCounts = await page.evaluate(() => window.__quizSubmitCounts);
   check(submitCounts.inline === 1 && submitCounts.modal === 0, `submit counts are inline=${submitCounts.inline}, modal=${submitCounts.modal}`);
 
-  const sectionHeightClosed = await root.evaluate((element) => element.getBoundingClientRect().height);
-  check(Math.abs(sectionHeightClosed - sectionHeightBefore) <= 1, `closing modal changed section height by ${sectionHeightClosed - sectionHeightBefore}px`);
   await page.close();
 }
 
