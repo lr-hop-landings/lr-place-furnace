@@ -1,0 +1,204 @@
+---
+interface CaseItem {
+  title: string;
+  tag?: string;
+  meta?: string;
+  situation: string;
+  solution: string[];
+  result: string;
+  imageSrc?: string;
+  imageAlt?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  accent?: string;
+  subline?: string;
+  items?: CaseItem[];
+}
+
+const {
+  eyebrow = "Реальные ситуации",
+  headline = "Кейсы, где важны не только чистота,",
+  accent = "но и спокойствие владельцев",
+  subline = "Карточки ситуаций с проблемой, решением и результатом.",
+  items = [
+    { title: "Сложный запах", tag: "Квартира", meta: "5 дней", situation: "Запах проник в мебель и напольные покрытия.", solution: ["Разбор источников", "Обработка поверхностей", "Озонирование"], result: "Помещение можно готовить к ремонту." },
+    { title: "Захламление", tag: "Студия", meta: "2 недели", situation: "Нужен вывоз и санитарная обработка без участия родственников.", solution: ["Сортировка", "Упаковка", "Дезинфекция"], result: "Сохранены важные вещи и очищены проходы." },
+    { title: "Скрытая влага", tag: "Дом", meta: "долго", situation: "После протечки появились запах и очаги плесени.", solution: ["Поиск влаги", "Сушка", "Антисептическая обработка"], result: "Снижены вторичные риски." },
+  ],
+} = Astro.props;
+---
+
+<section class="cases-emergency">
+  <div class="cases-emergency__inner">
+    <header>
+      {eyebrow && <p>{eyebrow}</p>}
+      <h2>{headline}{accent && <span>{accent}</span>}</h2>
+      {subline && <small>{subline}</small>}
+    </header>
+    <div class="cases-emergency__slider swiper" data-swiper-options='{"slidesPerView":1,"spaceBetween":18,"breakpoints":{"900":{"slidesPerView":2}}}'>
+      <div class="swiper-wrapper">
+        {items.map((item) => (
+          <article class="cases-emergency__card swiper-slide">
+            <div class="cases-emergency__image" aria-label={item.imageSrc ? item.imageAlt : "Место для реальной фотографии объекта"}>
+              {item.imageSrc
+                ? <img src={item.imageSrc} alt={item.imageAlt ?? ""} loading="lazy" />
+                : <span><b aria-hidden="true"></b><small>Реальное фото объекта<br />будет добавлено перед публикацией</small></span>}
+            </div>
+            <div class="cases-emergency__meta">
+              {item.tag && <span>{item.tag}</span>}
+              {item.meta && <span>{item.meta}</span>}
+            </div>
+            <h3>{item.title}</h3>
+            <p>{item.situation}</p>
+            <ul>{item.solution.map((step) => <li>{step}</li>)}</ul>
+            <strong>{item.result}</strong>
+          </article>
+        ))}
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cases-emergency {
+    padding: var(--spacing-section, 96px) var(--space-4, 16px);
+    background: var(--color-primary-dark, #0b1f33);
+    color: var(--color-white, #ffffff);
+  }
+
+  .cases-emergency__inner {
+    width: min(100%, var(--container-width, 1180px));
+    margin: 0 auto;
+  }
+
+  .cases-emergency header {
+    max-width: 940px;
+    margin-bottom: var(--space-10, 40px);
+  }
+
+  .cases-emergency header p,
+  .cases-emergency header small {
+    display: block;
+    margin: 0;
+    font-family: var(--font-body, sans-serif);
+  }
+
+  .cases-emergency header p {
+    margin-bottom: var(--space-3, 12px);
+    font-size: var(--text-xs, 12px);
+    font-weight: var(--font-bold, 800);
+    text-transform: uppercase;
+  }
+
+  .cases-emergency h2 {
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    font-size: clamp(34px, 6vw, 80px);
+    line-height: var(--leading-tight, 1.08);
+  }
+
+  .cases-emergency h2 span {
+    display: block;
+  }
+
+  .cases-emergency header small {
+    margin-top: var(--space-4, 16px);
+    font-size: var(--text-lg, 18px);
+    line-height: var(--leading-relaxed, 1.6);
+  }
+
+  .cases-emergency__slider {
+    overflow: hidden;
+  }
+
+  .cases-emergency__card {
+    display: grid;
+    gap: var(--space-4, 16px);
+    height: auto;
+    padding: var(--space-6, 24px);
+    border: 1px solid #ffffff;
+    background: #000000;
+  }
+
+  .cases-emergency__image {
+    display: grid;
+    aspect-ratio: 16 / 9;
+    place-items: center;
+    border: 1px solid #ffffff;
+    background: #d8d8d8;
+  }
+
+  .cases-emergency__image span {
+    display: grid;
+    gap: 14px;
+    place-items: center;
+    padding: 20px;
+    color: #111827;
+    text-align: center;
+  }
+
+  .cases-emergency__image b {
+    display: block;
+    width: 72px;
+    height: 52px;
+    border: 2px solid currentColor;
+    border-radius: 4px;
+    background: linear-gradient(145deg, transparent 48%, currentColor 49% 51%, transparent 52%);
+  }
+
+  .cases-emergency__image small {
+    font-family: var(--font-body, sans-serif);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .cases-emergency__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1);
+  }
+
+  .cases-emergency__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2, 8px);
+  }
+
+  .cases-emergency__meta span {
+    border: 1px solid #ffffff;
+    padding: 6px 10px;
+    font-size: var(--text-xs, 12px);
+    font-weight: var(--font-bold, 800);
+    text-transform: uppercase;
+  }
+
+  .cases-emergency h3,
+  .cases-emergency p,
+  .cases-emergency ul {
+    margin: 0;
+  }
+
+  .cases-emergency h3 {
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-2xl, 32px);
+    line-height: 1;
+  }
+
+  .cases-emergency p,
+  .cases-emergency li {
+    font-family: var(--font-body, sans-serif);
+    line-height: var(--leading-relaxed, 1.6);
+  }
+
+  .cases-emergency strong {
+    border-top: 1px solid #ffffff;
+    padding-top: var(--space-4, 16px);
+    font-family: var(--font-body, sans-serif);
+  }
+</style>

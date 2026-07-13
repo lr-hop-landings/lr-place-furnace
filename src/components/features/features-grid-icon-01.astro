@@ -1,0 +1,132 @@
+---
+interface Feature {
+  icon?: string;
+  title: string;
+  text: string;
+}
+
+interface Props {
+  headline: string;
+  subline?: string;
+  items: Feature[];
+}
+
+const { headline, subline, items } = Astro.props;
+---
+
+<section class="features-grid">
+  <div class="features-grid__inner">
+    <header class="features-grid__header">
+      <h2>{headline}</h2>
+      {subline && <p>{subline}</p>}
+    </header>
+    <div class="features-grid__grid">
+      {items.map((item) => (
+        <article class="features-grid__card">
+          <div class="features-grid__icon" aria-hidden="true">
+            {item.icon ? <img src={item.icon} alt="" loading="lazy" /> : <span />}
+          </div>
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .features-grid {
+    padding: var(--spacing-section, 96px) var(--space-4, 16px);
+    background: var(--color-surface, #ffffff);
+  }
+
+  .features-grid__inner {
+    width: min(100%, var(--container-width, 1180px));
+    margin: 0 auto;
+  }
+
+  .features-grid__header {
+    max-width: 760px;
+    margin-bottom: var(--space-10, 40px);
+  }
+
+  .features-grid h2 {
+    margin: 0;
+    color: var(--color-text, #000000);
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-3xl, 44px);
+    line-height: var(--leading-tight, 1.12);
+  }
+
+  .features-grid__header p {
+    margin: var(--space-4, 16px) 0 0;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-lg, 18px);
+    line-height: var(--leading-relaxed, 1.6);
+  }
+
+  .features-grid__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5, 20px);
+  }
+
+  .features-grid__card {
+    padding: var(--space-6, 24px);
+    border-radius: var(--radius-card, 16px);
+    background: var(--color-background, #ffffff);
+    box-shadow: var(--shadow-hard, 6px 6px 0 #000000);
+  }
+
+  .features-grid__icon {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    margin-bottom: var(--space-5, 20px);
+    border-radius: var(--radius-md, 12px);
+    background: var(--color-primary, #000000);
+  }
+
+  .features-grid__icon img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+  }
+
+  .features-grid__icon span {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-white, #ffffff);
+  }
+
+  .features-grid h3 {
+    margin: 0 0 var(--space-3, 12px);
+    color: var(--color-primary, #000000);
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-lg, 18px);
+    line-height: var(--leading-tight, 1.2);
+  }
+
+  .features-grid__card p {
+    margin: 0;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-sm, 14px);
+    line-height: var(--leading-relaxed, 1.6);
+  }
+
+  @media (max-width: 980px) {
+    .features-grid__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .features-grid__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

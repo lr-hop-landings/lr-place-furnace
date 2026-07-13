@@ -1,0 +1,239 @@
+---
+interface Item {
+  name: string;
+  text: string;
+  price?: string;
+  image?: string;
+}
+
+interface Props {
+  headline: string;
+  subline?: string;
+  items: Item[];
+  label?: string;
+}
+
+const { headline, subline, items, label = "Стоимость" } = Astro.props;
+---
+
+<section class="card-grid">
+  <div class="card-grid__inner">
+    <header class="card-grid__header">
+      <h2>{headline}</h2>
+      {subline && <p>{subline}</p>}
+    </header>
+    <div
+      class="card-grid__slider swiper"
+      data-swiper-options='{"slidesPerView":1,"spaceBetween":20,"breakpoints":{"680":{"slidesPerView":2},"1040":{"slidesPerView":3}}}'
+    >
+      <div class="card-grid__items swiper-wrapper">
+      {items.map((item) => (
+        <article class="card-grid__card swiper-slide">
+          {item.image ? (
+            <a class="card-grid__image glightbox" href={item.image} data-gallery="card-grid" data-title={item.name}>
+              <img src={item.image} alt={item.name} loading="lazy" />
+            </a>
+          ) : (
+            <div class="card-grid__image" aria-label="Плейсхолдер изображения">
+              <div class="card-grid__image-placeholder"></div>
+            </div>
+          )}
+          <div class="card-grid__body">
+            <h3>{item.name}</h3>
+            <p>{item.text}</p>
+            {item.price && (
+              <div class="card-grid__footer">
+                <span>{label}</span>
+                <strong>{item.price}</strong>
+              </div>
+            )}
+          </div>
+        </article>
+      ))}
+      </div>
+      <div class="card-grid__nav" aria-label="Card slider controls">
+        <button class="swiper-button-prev" type="button" aria-label="Предыдущая карточка">Назад</button>
+        <button class="swiper-button-next" type="button" aria-label="Следующая карточка">Вперед</button>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .card-grid {
+    padding: var(--spacing-section, 96px) var(--space-4, 16px);
+    background: var(--color-background, #ffffff);
+  }
+
+  .card-grid__inner {
+    width: min(100%, var(--container-width, 1180px));
+    margin: 0 auto;
+  }
+
+  .card-grid__header {
+    max-width: 760px;
+    margin-bottom: var(--space-10, 40px);
+  }
+
+  .card-grid h2 {
+    margin: 0;
+    color: var(--color-text, #000000);
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-3xl, 44px);
+    line-height: var(--leading-tight, 1.12);
+  }
+
+  .card-grid__header p {
+    margin: var(--space-4, 16px) 0 0;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-lg, 18px);
+  }
+
+  .card-grid__slider {
+    position: relative;
+    overflow: hidden;
+    padding: 8px 2px 58px;
+  }
+
+  .card-grid__items {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5, 20px);
+  }
+
+  .card-grid__slider.swiper-initialized .card-grid__items {
+    display: flex;
+    gap: 0;
+  }
+
+  .card-grid__card {
+    height: auto;
+    overflow: hidden;
+    border-radius: var(--radius-card, 20px);
+    background: var(--color-background, #ffffff);
+    box-shadow: var(--shadow-hard, 6px 6px 0 #000000);
+  }
+
+  .card-grid__image {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--color-surface, #ffffff);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .card-grid__image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .card-grid__image-placeholder {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-grid__image-placeholder::before {
+    position: absolute;
+    inset: 26%;
+    border: 2px solid #000000;
+    content: "";
+  }
+
+  .card-grid__image-placeholder::after {
+    position: absolute;
+    top: 34%;
+    left: 34%;
+    width: 32px;
+    height: 32px;
+    border: 2px solid #000000;
+    border-radius: 50%;
+    background: #ffffff;
+    content: "";
+  }
+
+  .card-grid__body {
+    padding: var(--space-5, 20px);
+  }
+
+  .card-grid h3 {
+    margin: 0 0 var(--space-3, 12px);
+    color: var(--color-primary, #000000);
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-xl, 22px);
+  }
+
+  .card-grid__body p {
+    margin: 0;
+    min-height: 72px;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-sm, 14px);
+    line-height: var(--leading-relaxed, 1.6);
+  }
+
+  .card-grid__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4, 16px);
+    margin-top: var(--space-5, 20px);
+    padding-top: var(--space-4, 16px);
+    border-top: 1px solid var(--color-border, #000000);
+    font-family: var(--font-body, sans-serif);
+  }
+
+  .card-grid__footer span {
+    color: var(--color-text-muted, #000000);
+  }
+
+  .card-grid__footer strong {
+    color: var(--color-primary, #000000);
+  }
+
+  .card-grid__nav {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    gap: 8px;
+    z-index: 3;
+  }
+
+  .card-grid__nav .swiper-button-prev,
+  .card-grid__nav .swiper-button-next {
+    position: static;
+    width: auto;
+    height: 42px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid #000000;
+    background: #ffffff;
+    color: #000000;
+    font: inherit;
+    font-size: var(--text-xs, 12px);
+    font-weight: var(--font-bold, 700);
+    text-transform: uppercase;
+  }
+
+  .card-grid__slider:not(.swiper-initialized) .card-grid__nav,
+  .card-grid__slider:not(.swiper-initialized) .swiper-pagination {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .card-grid__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 580px) {
+    .card-grid__items {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

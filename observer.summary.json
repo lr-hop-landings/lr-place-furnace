@@ -1,0 +1,18 @@
+﻿{
+    "run_path":  "D:\\works\\projects\\lr-place-furnace",
+    "generated_at":  "2026-07-13T15:19:18",
+    "status":  "NEEDS WORK",
+    "gate":  "WAITING_USER_DATA",
+    "applied_fix_passes":  0,
+    "dev_url":  "http://127.0.0.1:4321/ustanovka-metallicheskih-pechey/",
+    "report_path":  "D:\\works\\projects\\lr-place-furnace\\observer.report.md",
+    "fix_plan_path":  "D:\\works\\projects\\lr-place-furnace\\observer.fix-plan.md",
+    "counts":  {
+                   "blocking":  0,
+                   "auto_fix":  0,
+                   "fallback_rewrite":  0,
+                   "needs_user_data":  1,
+                   "re_verify":  0,
+                   "manual_review":  0
+               }
+}

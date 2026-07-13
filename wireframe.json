@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "project": "lr-place-furnace",
+    "audience": "Владельцы домов и дач СПб и Ленобласти",
+    "tone": ["expert", "trustworthy"],
+    "usp": "Один исполнитель на согласованный монтажный узел",
+    "concept": "Инженерная ясность",
+    "approval": "User explicitly requested execution of the approved working plan"
+  },
+  "blocks": [
+    {"order": 1, "type": "hero"},
+    {"order": 2, "type": "contacts"},
+    {"order": 3, "type": "quiz"},
+    {"order": 4, "type": "features"},
+    {"order": 5, "type": "features"},
+    {"order": 6, "type": "comparison"},
+    {"order": 7, "type": "features"},
+    {"order": 8, "type": "features"},
+    {"order": 9, "type": "pricing"},
+    {"order": 10, "type": "cases"},
+    {"order": 11, "type": "contacts"},
+    {"order": 12, "type": "steps"},
+    {"order": 13, "type": "trust-bar"},
+    {"order": 14, "type": "guarantees"},
+    {"order": 15, "type": "reviews"},
+    {"order": 16, "type": "faq"},
+    {"order": 17, "type": "contacts"}
+  ]
+}

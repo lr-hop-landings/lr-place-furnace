@@ -1,0 +1,222 @@
+---
+interface GuaranteeItem {
+  title: string;
+  text: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  headline: string;
+  subline?: string;
+  items: GuaranteeItem[];
+  summaryTitle?: string;
+  summaryText?: string;
+  authorName?: string;
+  authorRole?: string;
+  cta?: string;
+  ctaHref?: string;
+}
+
+const {
+  eyebrow,
+  headline,
+  subline,
+  items,
+  summaryTitle,
+  summaryText,
+  authorName,
+  authorRole,
+  cta,
+  ctaHref = "#contacts",
+} = Astro.props;
+---
+
+<section class="guarantee-certificate">
+  <div class="guarantee-certificate__inner">
+    <div class="guarantee-certificate__copy">
+      {eyebrow && <p>{eyebrow}</p>}
+      <h2>{headline}</h2>
+      {subline && <span>{subline}</span>}
+    </div>
+    <article class="guarantee-certificate__card">
+      <div class="guarantee-certificate__seal" aria-hidden="true">LR</div>
+      <div class="guarantee-certificate__items">
+        {items.map((item) => (
+          <div>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        ))}
+      </div>
+      {(summaryTitle || summaryText) && (
+        <div class="guarantee-certificate__summary">
+          {summaryTitle && <strong>{summaryTitle}</strong>}
+          {summaryText && <p>{summaryText}</p>}
+        </div>
+      )}
+      {(authorName || cta) && (
+        <footer class="guarantee-certificate__footer">
+          {authorName && (
+            <div>
+              <strong>{authorName}</strong>
+              {authorRole && <span>{authorRole}</span>}
+            </div>
+          )}
+          {cta && <a href={ctaHref}>{cta}</a>}
+        </footer>
+      )}
+    </article>
+  </div>
+</section>
+
+<style>
+  .guarantee-certificate {
+    padding: var(--spacing-section, 96px) var(--space-4, 16px);
+    background: var(--color-surface, #ffffff);
+    color: var(--color-text, #000000);
+  }
+
+  .guarantee-certificate__inner {
+    width: min(100%, var(--container-width, 1180px));
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(360px, 1fr);
+    gap: clamp(32px, 6vw, 72px);
+    align-items: center;
+  }
+
+  .guarantee-certificate__copy > p {
+    margin: 0 0 12px;
+    color: var(--color-primary, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-xs, 12px);
+    font-weight: var(--font-bold, 700);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .guarantee-certificate h2 {
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    font-size: clamp(30px, 4.2vw, 54px);
+    line-height: var(--leading-tight, 1.12);
+    letter-spacing: 0;
+  }
+
+  .guarantee-certificate__copy > span {
+    display: block;
+    margin-top: 18px;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    line-height: var(--leading-relaxed, 1.65);
+  }
+
+  .guarantee-certificate__card {
+    position: relative;
+    padding: clamp(28px, 4vw, 44px);
+    border: 1px solid var(--color-border, #000000);
+    border-radius: var(--radius-card, 8px);
+    background: var(--color-background, #ffffff);
+    box-shadow: var(--shadow-hard, 6px 6px 0 #000000);
+  }
+
+  .guarantee-certificate__seal {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    display: grid;
+    place-items: center;
+    width: 66px;
+    height: 66px;
+    border: 1px solid #000000;
+    border-radius: 50%;
+    color: var(--color-accent, #000000);
+    font-family: var(--font-heading, sans-serif);
+    font-weight: var(--font-bold, 800);
+  }
+
+  .guarantee-certificate__items {
+    display: grid;
+    gap: 22px;
+    padding-right: 78px;
+  }
+
+  .guarantee-certificate h3 {
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-xl, 20px);
+  }
+
+  .guarantee-certificate__items p,
+  .guarantee-certificate__summary p {
+    margin: 8px 0 0;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    line-height: var(--leading-relaxed, 1.65);
+  }
+
+  .guarantee-certificate__summary {
+    margin-top: 28px;
+    padding: 22px;
+    border-radius: var(--radius-card, 8px);
+    background: var(--color-surface, #ffffff);
+  }
+
+  .guarantee-certificate__summary strong,
+  .guarantee-certificate__footer strong {
+    display: block;
+    font-family: var(--font-heading, sans-serif);
+  }
+
+  .guarantee-certificate__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 28px;
+  }
+
+  .guarantee-certificate__footer span {
+    display: block;
+    margin-top: 4px;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-sm, 14px);
+  }
+
+  .guarantee-certificate__footer a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 22px;
+    border-radius: var(--radius-button, 14px);
+    background: var(--color-primary, #000000);
+    color: var(--color-white, #ffffff);
+    font-family: var(--font-body, sans-serif);
+    font-weight: var(--font-semibold, 600);
+    text-decoration: none;
+  }
+
+  @media (max-width: 860px) {
+    .guarantee-certificate__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .guarantee-certificate__items {
+      padding-right: 0;
+      padding-top: 70px;
+    }
+
+    .guarantee-certificate__footer {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .guarantee-certificate__footer a {
+      width: 100%;
+    }
+  }
+</style>

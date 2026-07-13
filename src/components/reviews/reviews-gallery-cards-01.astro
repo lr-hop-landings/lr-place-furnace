@@ -1,0 +1,259 @@
+---
+interface Review {
+  quote: string;
+  meta?: string;
+  text: string;
+  author: string;
+  image?: string;
+}
+
+interface Props {
+  headline: string;
+  subline?: string;
+  items: Review[];
+}
+
+const { headline, subline, items } = Astro.props;
+---
+
+<section class="review-cards">
+  <div class="review-cards__inner">
+    <header class="review-cards__header">
+      <h2>{headline}</h2>
+      {subline && <p>{subline}</p>}
+    </header>
+    {items.length > 0 ? (
+    <div class="review-cards__slider swiper" data-swiper-options='{"slidesPerView":1,"spaceBetween":20,"breakpoints":{"760":{"slidesPerView":2},"1080":{"slidesPerView":3}}}'>
+      <div class="review-cards__grid swiper-wrapper">
+      {items.map((review) => (
+        <article class="review-cards__card swiper-slide">
+          {review.image ? (
+            <a class="review-cards__media glightbox" href={review.image} data-gallery="review-cards" data-title={review.quote}>
+              <img src={review.image} alt="" loading="lazy" />
+            </a>
+          ) : (
+            <div class="review-cards__media" aria-label="Плейсхолдер изображения">
+              <div class="review-cards__image-placeholder"></div>
+            </div>
+          )}
+          <div class="review-cards__content">
+            <h3>{review.quote}</h3>
+            {review.meta && <p class="review-cards__meta">{review.meta}</p>}
+            <p class="review-cards__text">{review.text}</p>
+            <p class="review-cards__author">{review.author}</p>
+          </div>
+        </article>
+      ))}
+      </div>
+      <div class="review-cards__nav" aria-label="Review slider controls">
+        <button class="swiper-button-prev" type="button" aria-label="Предыдущий отзыв">Назад</button>
+        <button class="swiper-button-next" type="button" aria-label="Следующий отзыв">Вперед</button>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+    ) : (
+      <div class="review-cards__fallback">
+        <span aria-hidden="true">“</span>
+        <div>
+          <h3>Без вымышленных цитат</h3>
+          <p>Добавим сюда отзывы владельцев домов только после проверки источника и согласования публикации. Пока оцените состав работ, документы и процесс — они уже описаны на странице.</p>
+          <a href="#estimate-quiz">Задать вопрос по своему объекту</a>
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .review-cards {
+    padding: var(--spacing-section, 96px) var(--space-4, 16px);
+    background: var(--color-surface, #ffffff);
+  }
+
+  .review-cards__inner {
+    width: min(100%, var(--container-width, 1180px));
+    margin: 0 auto;
+  }
+
+  .review-cards__header {
+    max-width: 760px;
+    margin-bottom: var(--space-10, 40px);
+  }
+
+  .review-cards__fallback {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    padding: clamp(24px, 5vw, 56px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background: var(--color-background);
+  }
+
+  .review-cards__fallback > span { color: var(--color-accent); font-family: Georgia, serif; font-size: 92px; line-height: .7; }
+  .review-cards__fallback h3 { margin: 0; font-family: var(--font-heading); font-size: var(--text-2xl); }
+  .review-cards__fallback p { max-width: 720px; color: var(--color-text-muted); line-height: 1.65; }
+  .review-cards__fallback a { display: inline-flex; min-height: 48px; align-items: center; padding: 0 18px; border-radius: var(--radius-button); color: #fff; background: var(--color-primary); text-decoration: none; font-weight: 800; }
+
+  .review-cards h2 {
+    margin: 0;
+    color: var(--color-text, #000000);
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-3xl, 44px);
+    line-height: var(--leading-tight, 1.12);
+  }
+
+  .review-cards__header p {
+    margin: var(--space-4, 16px) 0 0;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-lg, 18px);
+  }
+
+  .review-cards__slider {
+    position: relative;
+    overflow: hidden;
+    padding: 8px 2px 58px;
+  }
+
+  .review-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5, 20px);
+  }
+
+  .review-cards__slider.swiper-initialized .review-cards__grid {
+    display: flex;
+    gap: 0;
+  }
+
+  .review-cards__card {
+    height: auto;
+    overflow: hidden;
+    border-radius: var(--radius-card, 20px);
+    background: var(--color-background, #ffffff);
+    box-shadow: var(--shadow-hard, 6px 6px 0 #000000);
+  }
+
+  .review-cards__media {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #e5e5e5;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .review-cards__card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .review-cards__image-placeholder {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .review-cards__image-placeholder::before {
+    position: absolute;
+    inset: 26%;
+    border: 2px solid #000000;
+    content: "";
+  }
+
+  .review-cards__image-placeholder::after {
+    position: absolute;
+    top: 34%;
+    left: 34%;
+    width: 32px;
+    height: 32px;
+    border: 2px solid #000000;
+    border-radius: 50%;
+    background: #ffffff;
+    content: "";
+  }
+
+  .review-cards__content {
+    padding: var(--space-6, 24px);
+  }
+
+  .review-cards h3 {
+    margin: 0 0 var(--space-3, 12px);
+    color: var(--color-primary, #000000);
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-xl, 22px);
+    line-height: var(--leading-tight, 1.2);
+  }
+
+  .review-cards__meta {
+    display: inline-flex;
+    margin: 0 0 var(--space-4, 16px);
+    padding: 8px 12px;
+    border-radius: var(--radius-full, 999px);
+    background: var(--color-surface, #ffffff);
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-xs, 12px);
+  }
+
+  .review-cards__text {
+    margin: 0;
+    color: var(--color-text, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-sm, 14px);
+    line-height: var(--leading-relaxed, 1.62);
+  }
+
+  .review-cards__author {
+    margin: var(--space-5, 20px) 0 0;
+    color: var(--color-primary, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-weight: var(--font-bold, 700);
+    text-align: right;
+  }
+
+  .review-cards__nav {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    gap: 8px;
+    z-index: 3;
+  }
+
+  .review-cards__nav .swiper-button-prev,
+  .review-cards__nav .swiper-button-next {
+    position: static;
+    width: auto;
+    height: 42px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid #000000;
+    background: #ffffff;
+    color: #000000;
+    font: inherit;
+    font-size: var(--text-xs, 12px);
+    font-weight: var(--font-bold, 700);
+    text-transform: uppercase;
+  }
+
+  .review-cards__slider:not(.swiper-initialized) .review-cards__nav,
+  .review-cards__slider:not(.swiper-initialized) .swiper-pagination {
+    display: none;
+  }
+
+  @media (max-width: 960px) {
+    .review-cards__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 620px) {
+    .review-cards__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

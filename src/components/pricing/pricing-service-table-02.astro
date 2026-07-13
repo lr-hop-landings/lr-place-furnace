@@ -1,0 +1,132 @@
+---
+interface PriceItem {
+  service: string;
+  details?: string;
+  price: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  items?: PriceItem[];
+  footnote?: string;
+}
+
+const {
+  eyebrow = "Стоимость",
+  headline = "Ориентиры по услугам",
+  items = [
+    { service: "Локальная обработка", details: "Один очаг и прилегающие поверхности", price: "от 12 000 ₽" },
+    { service: "Комплексная дезинфекция", details: "Комната или небольшая квартира", price: "от 28 000 ₽" },
+    { service: "Разбор и вывоз", details: "Упаковка, сортировка, утилизация", price: "от 18 000 ₽" },
+    { service: "Полное сопровождение", details: "Смета после осмотра объекта", price: "индивидуально" },
+  ],
+  footnote = "Финальная сумма зависит от площади, доступа, количества вещей и требуемых документов.",
+} = Astro.props;
+---
+
+<section class="service-prices">
+  <div class="service-prices__inner">
+    <header>
+      {eyebrow && <p>{eyebrow}</p>}
+      <h2>{headline}</h2>
+    </header>
+    <div class="service-prices__table">
+      {items.map((item) => (
+        <article>
+          <div>
+            <h3>{item.service}</h3>
+            {item.details && <p>{item.details}</p>}
+          </div>
+          <strong>{item.price}</strong>
+        </article>
+      ))}
+    </div>
+    {footnote && <small>{footnote}</small>}
+  </div>
+</section>
+
+<style>
+  .service-prices {
+    padding: var(--spacing-section, 96px) var(--space-4, 16px);
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .service-prices__inner {
+    width: min(100%, var(--container-width, 1060px));
+    margin: 0 auto;
+  }
+
+  .service-prices header {
+    margin-bottom: 42px;
+  }
+
+  .service-prices p,
+  .service-prices small {
+    font-family: var(--font-body, sans-serif);
+  }
+
+  .service-prices header p {
+    margin: 0 0 16px;
+    font-size: var(--text-xs, 12px);
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .service-prices h2 {
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    font-size: clamp(38px, 6vw, 82px);
+    line-height: 1;
+  }
+
+  .service-prices__table {
+    border-top: 1px solid #000000;
+  }
+
+  .service-prices article {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 24px;
+    align-items: start;
+    padding: 26px 0;
+    border-bottom: 1px solid #000000;
+  }
+
+  .service-prices h3 {
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-2xl, 30px);
+    line-height: 1.1;
+  }
+
+  .service-prices article p {
+    margin: 10px 0 0;
+    line-height: 1.6;
+  }
+
+  .service-prices strong {
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-xl, 22px);
+    text-align: right;
+  }
+
+  .service-prices small {
+    display: block;
+    max-width: 680px;
+    margin-top: 24px;
+    font-size: var(--text-sm, 14px);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 640px) {
+    .service-prices article {
+      grid-template-columns: 1fr;
+    }
+
+    .service-prices strong {
+      text-align: left;
+    }
+  }
+</style>

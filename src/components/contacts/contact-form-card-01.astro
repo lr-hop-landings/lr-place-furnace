@@ -1,0 +1,163 @@
+---
+interface Field {
+  name: string;
+  type?: "text" | "tel" | "email" | "file";
+  placeholder: string;
+  required?: boolean;
+}
+
+interface Props {
+  headline: string;
+  subline?: string;
+  cta: string;
+  action?: string;
+  fields?: Field[];
+}
+
+const { headline, subline, cta, fields = [] } = Astro.props;
+const visibleFields = fields.filter((field) => !["name", "phone"].includes(field.name));
+---
+
+<section class="contact-card" id="contacts" aria-labelledby="final-cta-title">
+  <div class="contact-card__inner">
+    <div class="contact-card__panel" data-lead-root>
+      <div class="contact-card__copy">
+        <p class="contact-card__eyebrow">Начните с фотографий и модели печи</p>
+        <h2 id="final-cta-title">{headline}</h2>
+        {subline && <p>{subline}</p>}
+        <div class="contact-card__phones">
+          <a href="tel:+78123444444">+7 (812) 344-44-44</a>
+          <a href="tel:88005554510">8 (800) 555-45-10</a>
+        </div>
+        <div class="contact-card__socials" aria-label="Социальные сети">
+          <a href="https://vk.com/lenremont" target="_blank" rel="noopener noreferrer">VK</a>
+          <a href="https://t.me/lenremont" target="_blank" rel="noopener noreferrer">Telegram</a>
+          <a href="https://max.ru/id471902475874_3_bot" target="_blank" rel="noopener noreferrer">MAX</a>
+        </div>
+      </div>
+
+      <form class="contact-card__form" data-hop-lead-form novalidate>
+        <input type="hidden" name="quiz_service" value="Установка металлической печи" />
+        <input type="hidden" name="phone" data-final-phone-value />
+        <label class="contact-card__name-field">
+          <span>Имя</span>
+          <input name="name" type="text" placeholder="Ваше имя" autocomplete="name" />
+        </label>
+        <label class="contact-card__desktop-phone">
+          <span>Телефон *</span>
+          <input type="tel" data-final-phone-input placeholder="+7 (___) ___-__-__" autocomplete="tel" inputmode="tel" />
+        </label>
+        <div class="contact-card__dialpad" data-final-dialpad>
+          <span>Телефон *</span>
+          <output data-final-dialpad-display aria-live="polite">+7</output>
+          <div>
+            {[1,2,3,4,5,6,7,8,9].map((digit) => <button type="button" data-digit={digit}>{digit}</button>)}
+            <button type="button" data-clear aria-label="Очистить номер">C</button>
+            <button type="button" data-digit="0">0</button>
+            <button type="button" data-backspace aria-label="Удалить последнюю цифру">⌫</button>
+          </div>
+        </div>
+        {visibleFields.map((field) => (
+          <label>
+            <span>{field.placeholder}{field.required ? " *" : ""}</span>
+            <input name={field.name} type={field.type ?? "text"} placeholder={field.placeholder} required={field.required} />
+          </label>
+        ))}
+        <label>
+          <span>Фотографии объекта</span>
+          <input name="photos[]" type="file" multiple accept="image/jpeg,image/png,image/webp,image/heic,image/heif" />
+        </label>
+        <fieldset>
+          <legend>Удобный способ ответа</legend>
+          <label><input type="radio" name="contact_method" value="Звонок" checked /> Звонок</label>
+          <label><input type="radio" name="contact_method" value="VK" /> VK</label>
+          <label><input type="radio" name="contact_method" value="Telegram" /> Telegram</label>
+          <label><input type="radio" name="contact_method" value="MAX" /> MAX</label>
+        </fieldset>
+        <label class="contact-card__consent">
+          <input type="checkbox" name="consent" value="Да" required />
+          <span>Соглашаюсь на обработку персональных данных. URL политики будет добавлен перед публикацией.</span>
+        </label>
+        <button class="contact-card__submit" type="submit">{cta}</button>
+        <p class="contact-card__microcopy">Без обязательства заказывать монтаж. Точная смета — после получения необходимых параметров.</p>
+        <p class="contact-card__status" data-lead-status tabindex="-1" hidden></p>
+      </form>
+      <div data-lead-success hidden>Спасибо! Заявка принята. Мы изучим параметры и свяжемся выбранным способом.</div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-card { padding: var(--spacing-section) var(--space-4); color: #fff; background: var(--color-primary-dark); }
+  .contact-card__inner { width: min(100%, var(--container-width)); margin: 0 auto; }
+  .contact-card__panel { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(28px, 6vw, 80px); padding: clamp(24px, 5vw, 64px); border: 1px solid rgb(255 255 255 / 14%); border-radius: 28px; background: linear-gradient(145deg, rgb(255 255 255 / 8%), rgb(255 255 255 / 2%)); }
+  .contact-card__copy { align-self: start; }
+  .contact-card__eyebrow { margin: 0 0 14px; color: #ffbb91; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+  .contact-card h2 { margin: 0; font-family: var(--font-heading); font-size: var(--text-3xl); line-height: var(--leading-tight); }
+  .contact-card__copy > p:not(.contact-card__eyebrow) { color: rgb(255 255 255 / 72%); font-size: var(--text-lg); line-height: 1.65; }
+  .contact-card__phones { display: grid; gap: 8px; margin-top: 30px; }
+  .contact-card__phones a { color: #fff; font-family: var(--font-heading); font-size: clamp(20px, 2.2vw, 30px); font-weight: 800; text-decoration: none; }
+  .contact-card__socials { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  .contact-card__socials a { padding: 9px 13px; border: 1px solid rgb(255 255 255 / 25%); border-radius: 999px; color: #fff; text-decoration: none; font-weight: 800; }
+  .contact-card__form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: clamp(20px, 3vw, 34px); border-radius: 22px; color: var(--color-text); background: #fff; }
+  .contact-card__form > label { display: grid; gap: 7px; font-size: 14px; font-weight: 700; }
+  .contact-card input:not([type="radio"]):not([type="checkbox"]) { width: 100%; min-height: 52px; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: 12px; color: var(--color-text); background: #fff; }
+  .contact-card fieldset { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 12px; padding: 13px; border: 1px solid var(--color-border); border-radius: 12px; }
+  .contact-card fieldset legend { padding: 0 5px; font-weight: 800; }
+  .contact-card fieldset label { display: flex; gap: 6px; align-items: center; }
+  .contact-card__consent { grid-column: 1 / -1; grid-template-columns: 22px 1fr !important; align-items: start; font-weight: 500 !important; line-height: 1.45; }
+  .contact-card__submit { grid-column: 1 / -1; min-height: 56px; border: 0; border-radius: var(--radius-button); color: #fff; background: var(--color-accent); cursor: pointer; font-weight: 800; }
+  .contact-card__microcopy, .contact-card__status { grid-column: 1 / -1; margin: 0; color: var(--color-text-muted); font-size: 12px; line-height: 1.5; }
+  .contact-card__status { padding: 12px; border-radius: 10px; color: var(--color-text); background: var(--color-accent-light); }
+  .contact-card__dialpad { display: none; }
+  [data-lead-success] { grid-column: 1 / -1; padding: 16px; border-radius: 12px; color: var(--color-text); background: var(--color-accent-light); }
+
+  @media (max-width: 820px) {
+    .contact-card__panel, .contact-card__form { grid-template-columns: 1fr; }
+    .contact-card__name-field, .contact-card__desktop-phone { display: none !important; }
+    .contact-card__dialpad { display: grid; gap: 9px; padding: 14px; border: 1px solid var(--color-border); border-radius: 16px; }
+    .contact-card__dialpad output { display: grid; min-height: 54px; place-items: center; border-radius: 12px; background: var(--color-background); font-size: 24px; font-weight: 800; }
+    .contact-card__dialpad > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .contact-card__dialpad button { min-height: 52px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; font-weight: 800; }
+  }
+</style>
+
+<script>
+  const initFinalForms = () => {
+    document.querySelectorAll<HTMLElement>(".contact-card[data-final-ready='false'], .contact-card:not([data-final-ready])").forEach((root) => {
+      root.dataset.finalReady = "true";
+      const form = root.querySelector<HTMLFormElement>("form");
+      const phoneValue = root.querySelector<HTMLInputElement>("[data-final-phone-value]");
+      const phoneInput = root.querySelector<HTMLInputElement>("[data-final-phone-input]");
+      const dialpad = root.querySelector<HTMLElement>("[data-final-dialpad]");
+      const display = root.querySelector<HTMLOutputElement>("[data-final-dialpad-display]");
+      let digits = "";
+
+      const normalize = (raw: string) => {
+        const all = raw.replace(/\D/g, "").replace(/^8/, "7");
+        const body = all.startsWith("7") ? all.slice(1, 11) : all.slice(0, 10);
+        return body ? `+7${body}` : "";
+      };
+      phoneInput?.addEventListener("input", () => { if (phoneValue) phoneValue.value = normalize(phoneInput.value); });
+      dialpad?.addEventListener("click", (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLButtonElement>("button");
+        if (!button) return;
+        if (button.dataset.digit && digits.length < 10) digits += button.dataset.digit;
+        if (button.hasAttribute("data-backspace")) digits = digits.slice(0, -1);
+        if (button.hasAttribute("data-clear")) digits = "";
+        if (phoneValue) phoneValue.value = digits ? `+7${digits}` : "";
+        if (display) display.value = `+7 ${digits}`;
+      });
+      form?.addEventListener("submit", (event) => {
+        const consent = form.querySelector<HTMLInputElement>('[name="consent"]');
+        if (!phoneValue?.value.match(/^\+7\d{10}$/) || !consent?.checked || !form.checkValidity()) {
+          event.preventDefault();
+          form.reportValidity();
+          (phoneInput || dialpad)?.focus();
+        }
+      });
+    });
+  };
+  initFinalForms();
+  document.addEventListener("astro:page-load", initFinalForms);
+</script>

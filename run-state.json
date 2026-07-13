@@ -1,0 +1,98 @@
+﻿{
+    "schema_version":  "0.1.0",
+    "project_slug":  "lr-place-furnace",
+    "run_path":  "D:\\works\\projects\\lr-place-furnace",
+    "updated_at":  "2026-07-13T15:19:18",
+    "stage":  "qa",
+    "brief":  "Build the approved lr-place-furnace-working-plan.md as a production-grade static Astro landing in the current directory.",
+    "approvals":  {
+                      "wireframe":  true,
+                      "blocks":  true,
+                      "style":  true,
+                      "build":  true,
+                      "fallbacks":  true
+                  },
+    "artifacts":  {
+                      "analysis":  "D:\\works\\projects\\lr-place-furnace\\analysis.json",
+                      "wireframe_md":  "D:\\works\\projects\\lr-place-furnace\\wireframe.md",
+                      "wireframe_json":  "D:\\works\\projects\\lr-place-furnace\\wireframe.json",
+                      "resolved_md":  "D:\\works\\projects\\lr-place-furnace\\wireframe.resolved.md",
+                      "resolved_json":  "D:\\works\\projects\\lr-place-furnace\\wireframe.resolved.json",
+                      "block_selection_report":  "D:\\works\\projects\\lr-place-furnace\\block-selection.report.md",
+                      "style_tokens":  "D:\\works\\projects\\lr-place-furnace\\style.tokens.json",
+                      "style_css":  "D:\\works\\projects\\lr-place-furnace\\style.css",
+                      "package_json":  "D:\\works\\projects\\lr-place-furnace\\package.json",
+                      "page":  "D:\\works\\projects\\lr-place-furnace\\src\\pages\\index.astro",
+                      "builder_report":  "D:\\works\\projects\\lr-place-furnace\\builder.report.md",
+                      "quality_score":  "D:\\works\\projects\\lr-place-furnace\\quality-score.json",
+                      "manual_fill":  "D:\\works\\projects\\lr-place-furnace\\manual-fill.md"
+                  },
+    "observer":  {
+                     "status":  "NEEDS WORK",
+                     "gate":  "WAITING_USER_DATA",
+                     "summary_path":  "D:\\works\\projects\\lr-place-furnace\\observer.summary.json",
+                     "report_path":  "D:\\works\\projects\\lr-place-furnace\\observer.report.md",
+                     "fix_plan_path":  "D:\\works\\projects\\lr-place-furnace\\observer.fix-plan.md",
+                     "counts":  {
+                                    "blocking":  0,
+                                    "auto_fix":  0,
+                                    "fallback_rewrite":  0,
+                                    "needs_user_data":  1,
+                                    "re_verify":  0,
+                                    "manual_review":  0
+                                }
+                 },
+    "observer_summary_fresh":  true,
+    "pending_user_decisions":  [
+                                   "Подтвердить endpoint/поведение HTML On Page Lead Capture и поддержку photos[].",
+                                   "Утвердить прайс или принять fallback «после оценки объекта».",
+                                   "Передать подтвержденные карточки кейсов и разрешения на фото либо принять fallback-сценарии без заявления о выполненных работах.",
+                                   "Согласовать цитату директора и передать оригинальный портрет либо принять fallback без цитаты/портрета.",
+                                   "Подтвердить, что ошибочная услуга в заголовке PROMPT.md не меняет scope установки печей.",
+                                   "Передать реальные фотографии Hero, этапов, типов печей и домов.",
+                                   "Передать минимум три подтвержденных отзыва либо принять честный блок о правилах публикации отзывов.",
+                                   "Передать обезличенные документы.",
+                                   "Передать URL политики обработки персональных данных.",
+                                   "Передать URL отдельной услуги печника.",
+                                   "Подтвердить canonical production domain."
+                               ],
+    "next_action":  "Ask the user for manual-fill data or explicit fallback acceptance.",
+    "history":  [
+                    {
+                        "at":  "2026-07-13T14:52:11",
+                        "event":  "state_synced",
+                        "stage":  "brief",
+                        "gate":  null
+                    },
+                    {
+                        "at":  "2026-07-13T14:56:51",
+                        "event":  "state_synced",
+                        "stage":  "style",
+                        "gate":  null
+                    },
+                    {
+                        "at":  "2026-07-13T14:57:04",
+                        "event":  "state_synced",
+                        "stage":  "style",
+                        "gate":  null
+                    },
+                    {
+                        "at":  "2026-07-13T15:17:07",
+                        "event":  "state_synced",
+                        "stage":  "built",
+                        "gate":  null
+                    },
+                    {
+                        "at":  "2026-07-13T15:17:35",
+                        "event":  "state_synced",
+                        "stage":  "qa",
+                        "gate":  "NEEDS_AGENT_WORK"
+                    },
+                    {
+                        "at":  "2026-07-13T15:19:18",
+                        "event":  "state_synced",
+                        "stage":  "qa",
+                        "gate":  "WAITING_USER_DATA"
+                    }
+                ]
+}

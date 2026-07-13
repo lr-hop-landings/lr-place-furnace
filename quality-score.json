@@ -1,0 +1,32 @@
+﻿{
+    "schema_version":  "0.1.0",
+    "generated_at":  "2026-07-13T15:19:18",
+    "status":  "NEEDS WORK",
+    "scores":  {
+                   "technical":  100,
+                   "content":  85,
+                   "trust":  100,
+                   "visual":  100,
+                   "total":  96
+               },
+    "signals":  {
+                    "error_count":  0,
+                    "warning_count":  1,
+                    "info_count":  0,
+                    "screenshot_status":  "pass",
+                    "visual_checks_status":  "missing",
+                    "desktop_non_blank":  null,
+                    "mobile_non_blank":  null,
+                    "desktop_horizontal_overflow":  null,
+                    "mobile_horizontal_overflow":  null,
+                    "desktop_first_screen_cta_visible":  null,
+                    "mobile_first_screen_cta_visible":  null,
+                    "technical_warning_count":  0,
+                    "content_warning_count":  1,
+                    "trust_warning_count":  0,
+                    "asset_warning_count":  0
+                },
+    "recommendations":  [
+                            "Collect real user data or explicitly accept the fallback before publishing."
+                        ]
+}

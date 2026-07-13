@@ -1,0 +1,132 @@
+---
+interface FaqItem {
+  q: string;
+  a: string;
+  open?: boolean;
+}
+
+interface Props {
+  headline: string;
+  subline?: string;
+  items: FaqItem[];
+}
+
+const { headline, subline, items } = Astro.props;
+---
+
+<section class="faq-accordion">
+  <div class="faq-accordion__inner">
+    <header class="faq-accordion__header">
+      <h2>{headline}</h2>
+      {subline && <p>{subline}</p>}
+    </header>
+    <div class="faq-accordion__items">
+      {items.map((item) => (
+        <details class="faq-accordion__item" open={item.open}>
+          <summary>
+            <span>{item.q}</span>
+            <i aria-hidden="true" />
+          </summary>
+          <div class="faq-accordion__body" set:html={item.a} />
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-accordion {
+    padding: var(--spacing-section, 96px) var(--space-4, 16px);
+    background: var(--color-surface, #ffffff);
+  }
+
+  .faq-accordion__inner {
+    width: min(100%, var(--container-width, 980px));
+    margin: 0 auto;
+  }
+
+  .faq-accordion__header {
+    margin-bottom: var(--space-8, 32px);
+  }
+
+  .faq-accordion h2 {
+    margin: 0;
+    color: var(--color-text, #000000);
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-3xl, 44px);
+    line-height: var(--leading-tight, 1.12);
+  }
+
+  .faq-accordion__header p {
+    margin: var(--space-4, 16px) 0 0;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-lg, 18px);
+  }
+
+  .faq-accordion__items {
+    display: grid;
+    gap: var(--space-4, 16px);
+  }
+
+  .faq-accordion__item {
+    overflow: hidden;
+    border-radius: var(--radius-card, 18px);
+    background: var(--color-background, #ffffff);
+    box-shadow: var(--shadow-hard, 6px 6px 0 #000000);
+  }
+
+  .faq-accordion summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4, 16px);
+    padding: var(--space-5, 20px) var(--space-6, 24px);
+    cursor: pointer;
+    list-style: none;
+    color: var(--color-text, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-base, 16px);
+    font-weight: var(--font-bold, 700);
+  }
+
+  .faq-accordion summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-accordion summary i {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--color-accent, #000000);
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  .faq-accordion summary i::before,
+  .faq-accordion summary i::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 14px;
+    height: 2px;
+    background: var(--color-white, #ffffff);
+    transform: translate(-50%, -50%);
+  }
+
+  .faq-accordion summary i::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  .faq-accordion details[open] summary i::after {
+    display: none;
+  }
+
+  .faq-accordion__body {
+    padding: 0 var(--space-6, 24px) var(--space-5, 20px);
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-base, 16px);
+    line-height: var(--leading-relaxed, 1.62);
+  }
+</style>

@@ -1,0 +1,115 @@
+---
+interface Item {
+  title: string;
+  text: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  items?: Item[];
+}
+
+const {
+  eyebrow = "Инструменты",
+  headline = "Оборудование встроено в процесс, а не показано ради эффекта",
+  items = [
+    { title: "Диагностика", text: "Выбираем метод после осмотра материалов и источника проблемы." },
+    { title: "Обработка", text: "Комбинируем механическую очистку, составы, туман или озон." },
+    { title: "Контроль", text: "Проверяем, что обработка не конфликтует с дальнейшим ремонтом или проживанием." },
+  ],
+} = Astro.props;
+---
+
+<section class="equipment-process">
+  <div class="equipment-process__inner">
+    <header>
+      {eyebrow && <p>{eyebrow}</p>}
+      <h2>{headline}</h2>
+    </header>
+    <div class="equipment-process__items">
+      {items.map((item, index) => (
+        <article>
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .equipment-process {
+    padding: var(--spacing-section, 96px) var(--space-4, 16px);
+    background: var(--color-primary-dark, #0b1f33);
+    color: #ffffff;
+  }
+
+  .equipment-process__inner {
+    width: min(100%, var(--container-width, 1180px));
+    margin: 0 auto;
+  }
+
+  .equipment-process header {
+    max-width: 980px;
+    margin-bottom: 48px;
+  }
+
+  .equipment-process p,
+  .equipment-process span {
+    font-family: var(--font-body, sans-serif);
+  }
+
+  .equipment-process header p {
+    margin: 0 0 16px;
+    font-size: var(--text-xs, 12px);
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .equipment-process h2 {
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    font-size: clamp(36px, 6vw, 78px);
+    line-height: 1;
+  }
+
+  .equipment-process__items {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+  }
+
+  .equipment-process article {
+    min-height: 300px;
+    padding: 28px;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+  }
+
+  .equipment-process article > span {
+    display: block;
+    margin-bottom: 72px;
+    font-weight: 900;
+  }
+
+  .equipment-process h3 {
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-2xl, 30px);
+    line-height: 1.1;
+  }
+
+  .equipment-process article p {
+    margin: 16px 0 0;
+    line-height: 1.65;
+  }
+
+  @media (max-width: 820px) {
+    .equipment-process__items {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

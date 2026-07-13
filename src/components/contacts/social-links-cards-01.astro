@@ -1,0 +1,250 @@
+---
+interface SocialItem {
+  name: string;
+  href: string;
+  handle?: string;
+  hint?: string;
+  color?: string;
+  gradient?: string;
+  qrSrc?: string;
+  qrAlt?: string;
+  iconPath?: string;
+  viewBox?: string;
+  fillRule?: "nonzero" | "evenodd";
+  clipRule?: "nonzero" | "evenodd";
+}
+
+interface Props {
+  title?: string;
+  subline?: string;
+  items?: SocialItem[];
+}
+
+const {
+  title = "Напишите нам в удобной социальной сети",
+  subline = "Короткий блок контактов для мессенджеров, соцсетей и QR-точек связи. Цвета кнопок и QR-коды сохраняют брендовый вид.",
+  items = [
+    {
+      name: "Telegram",
+      href: "https://telegram.me/lenremont_bot",
+      handle: "@lenremont_bot",
+      hint: "Наведите камеру",
+      color: "#4BB3F7",
+      qrSrc: "/images/lr-qr-tg-white.png",
+      qrAlt: "QR-код Telegram",
+      viewBox: "0 0 24 20",
+      iconPath:
+        "M21.9539 0.176566C21.9539 0.176566 24.1741 -0.689148 23.989 1.4133C23.9274 2.27903 23.3724 5.30902 22.9406 8.58639L21.4605 18.2948C21.4605 18.2948 21.3372 19.717 20.2271 19.9644C19.117 20.2117 17.4519 19.0987 17.1435 18.8513C16.8968 18.6658 12.5182 15.8831 10.9763 14.5227C10.5446 14.1517 10.0513 13.4096 11.038 12.5439L17.5136 6.36028C18.2536 5.61823 18.9937 3.8868 15.9101 5.98925L7.27606 11.8638C7.27606 11.8638 6.28932 12.4821 4.4392 11.9256L0.430526 10.6888C0.430526 10.6888 -1.04959 9.76131 1.47894 8.83371C7.64612 5.92737 15.2317 2.9592 21.9539 0.176566Z",
+    },
+    {
+      name: "VK",
+      href: "https://vk.com/lenremont",
+      handle: "vk.com/lenremont",
+      hint: "Наведите камеру",
+      color: "#0077FF",
+      qrSrc: "/images/lr-qr-vk-white.png",
+      qrAlt: "QR-код VK",
+      viewBox: "0 0 67 42",
+      iconPath:
+        "M35.9736 41.625C13.4075 41.625 0.536337 26 0 0H11.3037C11.675 19.0833 20.0081 27.1666 26.6087 28.8333V0H37.2527V16.4582C43.7708 15.7499 50.6181 8.25 52.9284 0H63.5723C61.7983 10.1667 54.3726 17.6666 49.0921 20.7499C54.3726 23.2499 62.8301 29.7916 66.0479 41.625H54.3314C51.8149 33.7083 45.5448 27.5833 37.2527 26.7499V41.625H35.9736Z",
+    },
+    {
+      name: "Max",
+      href: "https://max.ru/id471902475874_3_bot",
+      handle: "max.ru",
+      hint: "Наведите камеру",
+      color: "#C63DEB",
+      gradient: "linear-gradient(135deg, #5b51d8, #7c4dff 20%, #8b5cf6 50%, #a855f7 70%, #d946ef)",
+      qrSrc: "/images/lr-qr-max-white.png",
+      qrAlt: "QR-код Max",
+      viewBox: "0 0 24 24",
+      fillRule: "evenodd",
+      clipRule: "evenodd",
+      iconPath:
+        "M12.2589 23.9315C9.90029 23.9315 8.80729 23.5862 6.90892 22.2049C5.70086 23.7588 1.89262 24.9733 1.73154 22.8955C1.73154 21.3358 1.38063 20.0177 0.995206 18.5789C0.52349 16.8062 0 14.832 0 11.9715C0 5.13969 5.58006 0 12.1956 0C18.8111 0 24 5.39869 24 12.0406C24 18.6825 18.65 23.9373 12.2589 23.9373M12.3567 5.91093C9.13519 5.74402 6.62129 7.98293 6.06903 11.4938C5.60882 14.4003 6.4257 17.94 7.12177 18.1242C7.44967 18.2048 8.28955 17.5256 8.80729 17.0019C9.65868 17.5601 10.6366 17.986 11.7239 18.0436C15.0259 18.2163 17.954 15.6263 18.1323 12.3053C18.1955 10.6964 17.6263 9.12671 16.5467 7.93255C15.4671 6.7384 13.963 6.01477 12.3567 5.91669",
+    },
+  ],
+} = Astro.props;
+---
+
+<section class="social-links-cards">
+  <div class="social-links-cards__inner">
+    <header>
+      <h2>{title}</h2>
+      {subline && <p>{subline}</p>}
+    </header>
+    <div class="social-links-cards__grid">
+      {items.map((item) => (
+        <article class="social-links-cards__card">
+          <a class="social-links-cards__button" href={item.href} target="_blank" rel="noopener noreferrer" style={`background: ${item.gradient || item.color || "#000000"}`}>
+            {item.iconPath ? (
+              <svg viewBox={item.viewBox ?? "0 0 24 24"} width="24" height="24" fill="currentColor" aria-hidden="true">
+                <path d={item.iconPath} fill-rule={item.fillRule} clip-rule={item.clipRule} />
+              </svg>
+            ) : (
+              <span>{item.name.slice(0, 2)}</span>
+            )}
+            <strong>Написать в {item.name}</strong>
+          </a>
+          <details class="social-links-cards__qr-toggle">
+            <summary>{item.hint || "Показать QR"}</summary>
+            <span class="social-links-cards__qr">
+              {item.qrSrc ? <img src={item.qrSrc} alt={item.qrAlt ?? `QR-код ${item.name}`} loading="lazy" /> : <i aria-label={`QR-код ${item.name}`} />}
+            </span>
+          </details>
+          <span class="social-links-cards__meta">
+            <strong>{item.name}</strong>
+            {item.handle && <small>{item.handle}</small>}
+          </span>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .social-links-cards {
+    padding: var(--spacing-section, 96px) var(--space-4, 16px);
+    background: var(--color-background, #ffffff);
+    color: var(--color-text, #000000);
+  }
+
+  .social-links-cards__inner {
+    width: min(100%, var(--container-width, 1180px));
+    margin: 0 auto;
+  }
+
+  .social-links-cards header {
+    max-width: 780px;
+    margin-bottom: var(--space-10, 40px);
+  }
+
+  .social-links-cards h2 {
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    font-size: clamp(32px, 5vw, 64px);
+    line-height: var(--leading-tight, 1.08);
+  }
+
+  .social-links-cards p {
+    margin: var(--space-4, 16px) 0 0;
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-lg, 18px);
+    line-height: var(--leading-relaxed, 1.6);
+  }
+
+  .social-links-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4, 16px);
+  }
+
+  .social-links-cards__card {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: var(--space-4, 16px);
+    min-height: 100%;
+    padding: var(--space-5, 20px);
+    border: 1px solid var(--color-border, #000000);
+    background: var(--color-surface, #ffffff);
+    color: inherit;
+  }
+
+  .social-links-cards__button {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    padding: 0 18px;
+    border-radius: var(--radius-button, 12px);
+    place-items: center;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .social-links-cards__button strong { font-size: var(--text-base, 16px); }
+
+  .social-links-cards__button svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .social-links-cards__button > span {
+    font-family: var(--font-body, sans-serif);
+    font-weight: var(--font-bold, 800);
+  }
+
+  .social-links-cards__qr {
+    display: grid;
+    aspect-ratio: 1;
+    place-items: center;
+    padding: var(--space-4, 16px);
+    border: 1px solid #000000;
+    background: #f2f2f2;
+    overflow: hidden;
+  }
+
+  .social-links-cards__qr-toggle summary {
+    min-height: 44px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-button);
+    font-family: var(--font-body);
+    font-weight: 800;
+    list-style: none;
+  }
+
+  .social-links-cards__qr-toggle summary::-webkit-details-marker { display: none; }
+
+  .social-links-cards__qr-toggle:not([open]) .social-links-cards__qr { display: none; }
+
+  @media (min-width: 781px) {
+    .social-links-cards__qr-toggle summary { display: none; }
+  }
+
+  .social-links-cards__qr img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .social-links-cards__qr i {
+    width: 72px;
+    height: 72px;
+    border: 2px solid #000000;
+  }
+
+  .social-links-cards__meta {
+    display: grid;
+    gap: var(--space-2, 8px);
+    align-content: end;
+  }
+
+  .social-links-cards strong {
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-2xl, 32px);
+    line-height: 1;
+  }
+
+  .social-links-cards small,
+  .social-links-cards em {
+    overflow-wrap: anywhere;
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-sm, 14px);
+    font-style: normal;
+  }
+
+  .social-links-cards em {
+    font-weight: var(--font-bold, 800);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 780px) {
+    .social-links-cards__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

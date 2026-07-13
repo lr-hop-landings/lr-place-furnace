@@ -1,0 +1,116 @@
+---
+interface Step {
+  n?: number;
+  title: string;
+  text: string;
+}
+
+interface Props {
+  headline: string;
+  subline?: string;
+  items: Step[];
+}
+
+const { headline, subline, items } = Astro.props;
+---
+
+<section class="steps-grid">
+  <div class="steps-grid__inner">
+    <header class="steps-grid__header">
+      <h2>{headline}</h2>
+      {subline && <p>{subline}</p>}
+    </header>
+    <div class="steps-grid__items">
+      {items.map((item, index) => (
+        <article class="steps-grid__item">
+          <div class="steps-grid__num">{item.n || index + 1}</div>
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .steps-grid {
+    padding: var(--spacing-section, 96px) var(--space-4, 16px);
+    background: var(--color-background, #ffffff);
+  }
+
+  .steps-grid__inner {
+    width: min(100%, var(--container-width, 1180px));
+    margin: 0 auto;
+  }
+
+  .steps-grid__header {
+    max-width: 760px;
+    margin-bottom: var(--space-10, 40px);
+  }
+
+  .steps-grid h2 {
+    margin: 0;
+    color: var(--color-text, #000000);
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-3xl, 44px);
+    line-height: var(--leading-tight, 1.12);
+  }
+
+  .steps-grid__header p {
+    margin: var(--space-4, 16px) 0 0;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-lg, 18px);
+  }
+
+  .steps-grid__items {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8, 32px) var(--space-10, 40px);
+  }
+
+  .steps-grid__item {
+    padding-top: var(--space-2, 8px);
+  }
+
+  .steps-grid__num {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    margin-bottom: var(--space-4, 16px);
+    border-radius: var(--radius-md, 12px);
+    background: var(--color-primary, #000000);
+    color: var(--color-white, #ffffff);
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-xl, 22px);
+    font-weight: var(--font-bold, 700);
+  }
+
+  .steps-grid h3 {
+    margin: 0 0 var(--space-3, 12px);
+    color: var(--color-primary, #000000);
+    font-family: var(--font-heading, sans-serif);
+    font-size: var(--text-xl, 22px);
+  }
+
+  .steps-grid__item p {
+    margin: 0;
+    color: var(--color-text-muted, #000000);
+    font-family: var(--font-body, sans-serif);
+    font-size: var(--text-sm, 14px);
+    line-height: var(--leading-relaxed, 1.62);
+  }
+
+  @media (max-width: 860px) {
+    .steps-grid__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .steps-grid__items {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
