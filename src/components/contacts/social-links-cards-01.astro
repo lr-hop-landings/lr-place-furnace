@@ -18,6 +18,7 @@ interface Props {
   title?: string;
   subline?: string;
   items?: SocialItem[];
+  variant?: "cards" | "qr-strip";
 }
 
 const {
@@ -64,41 +65,124 @@ const {
         "M12.2589 23.9315C9.90029 23.9315 8.80729 23.5862 6.90892 22.2049C5.70086 23.7588 1.89262 24.9733 1.73154 22.8955C1.73154 21.3358 1.38063 20.0177 0.995206 18.5789C0.52349 16.8062 0 14.832 0 11.9715C0 5.13969 5.58006 0 12.1956 0C18.8111 0 24 5.39869 24 12.0406C24 18.6825 18.65 23.9373 12.2589 23.9373M12.3567 5.91093C9.13519 5.74402 6.62129 7.98293 6.06903 11.4938C5.60882 14.4003 6.4257 17.94 7.12177 18.1242C7.44967 18.2048 8.28955 17.5256 8.80729 17.0019C9.65868 17.5601 10.6366 17.986 11.7239 18.0436C15.0259 18.2163 17.954 15.6263 18.1323 12.3053C18.1955 10.6964 17.6263 9.12671 16.5467 7.93255C15.4671 6.7384 13.963 6.01477 12.3567 5.91669",
     },
   ],
+  variant = "cards",
 } = Astro.props;
+
+const channelIcons: Record<string, Pick<SocialItem, "iconPath" | "viewBox" | "fillRule" | "clipRule">> = {
+  telegram: {
+    viewBox: "0 0 24 20",
+    iconPath:
+      "M21.9539 0.176566C21.9539 0.176566 24.1741 -0.689148 23.989 1.4133C23.9274 2.27903 23.3724 5.30902 22.9406 8.58639L21.4605 18.2948C21.4605 18.2948 21.3372 19.717 20.2271 19.9644C19.117 20.2117 17.4519 19.0987 17.1435 18.8513C16.8968 18.6658 12.5182 15.8831 10.9763 14.5227C10.5446 14.1517 10.0513 13.4096 11.038 12.5439L17.5136 6.36028C18.2536 5.61823 18.9937 3.8868 15.9101 5.98925L7.27606 11.8638C7.27606 11.8638 6.28932 12.4821 4.4392 11.9256L0.430526 10.6888C0.430526 10.6888 -1.04959 9.76131 1.47894 8.83371C7.64612 5.92737 15.2317 2.9592 21.9539 0.176566Z",
+  },
+  vk: {
+    viewBox: "0 0 67 42",
+    iconPath:
+      "M35.9736 41.625C13.4075 41.625 0.536337 26 0 0H11.3037C11.675 19.0833 20.0081 27.1666 26.6087 28.8333V0H37.2527V16.4582C43.7708 15.7499 50.6181 8.25 52.9284 0H63.5723C61.7983 10.1667 54.3726 17.6666 49.0921 20.7499C54.3726 23.2499 62.8301 29.7916 66.0479 41.625H54.3314C51.8149 33.7083 45.5448 27.5833 37.2527 26.7499V41.625H35.9736Z",
+  },
+  max: {
+    viewBox: "0 0 24 24",
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    iconPath:
+      "M12.2589 23.9315C9.90029 23.9315 8.80729 23.5862 6.90892 22.2049C5.70086 23.7588 1.89262 24.9733 1.73154 22.8955C1.73154 21.3358 1.38063 20.0177 0.995206 18.5789C0.52349 16.8062 0 14.832 0 11.9715C0 5.13969 5.58006 0 12.1956 0C18.8111 0 24 5.39869 24 12.0406C24 18.6825 18.65 23.9373 12.2589 23.9373M12.3567 5.91093C9.13519 5.74402 6.62129 7.98293 6.06903 11.4938C5.60882 14.4003 6.4257 17.94 7.12177 18.1242C7.44967 18.2048 8.28955 17.5256 8.80729 17.0019C9.65868 17.5601 10.6366 17.986 11.7239 18.0436C15.0259 18.2163 17.954 15.6263 18.1323 12.3053C18.1955 10.6964 17.6263 9.12671 16.5467 7.93255C15.4671 6.7384 13.963 6.01477 12.3567 5.91669",
+  },
+};
+
+const stripItems = items.map((item) => ({
+  ...channelIcons[item.name.toLocaleLowerCase("ru-RU")],
+  ...item,
+}));
+const accentWord = "соцсетях";
+const accentStart = title.toLocaleLowerCase("ru-RU").lastIndexOf(accentWord);
+const titleBeforeAccent = accentStart >= 0 ? title.slice(0, accentStart) : title;
+const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
 ---
 
-<section class="social-links-cards">
+<section class:list={["social-links-cards", { "social-links-cards--qr-strip": variant === "qr-strip" }]}>
   <div class="social-links-cards__inner">
-    <header>
-      <h2>{title}</h2>
-      {subline && <p>{subline}</p>}
-    </header>
-    <div class="social-links-cards__grid">
-      {items.map((item) => (
-        <article class="social-links-cards__card">
-          <a class="social-links-cards__button" href={item.href} target="_blank" rel="noopener noreferrer" style={`background: ${item.gradient || item.color || "#000000"}`}>
-            {item.iconPath ? (
-              <svg viewBox={item.viewBox ?? "0 0 24 24"} width="24" height="24" fill="currentColor" aria-hidden="true">
-                <path d={item.iconPath} fill-rule={item.fillRule} clip-rule={item.clipRule} />
-              </svg>
-            ) : (
-              <span>{item.name.slice(0, 2)}</span>
-            )}
-            <strong>Написать в {item.name}</strong>
-          </a>
-          <details class="social-links-cards__qr-toggle">
-            <summary>{item.hint || "Показать QR"}</summary>
-            <span class="social-links-cards__qr">
-              {item.qrSrc ? <img src={item.qrSrc} alt={item.qrAlt ?? `QR-код ${item.name}`} loading="lazy" /> : <i aria-label={`QR-код ${item.name}`} />}
-            </span>
-          </details>
-          <span class="social-links-cards__meta">
-            <strong>{item.name}</strong>
-            {item.handle && <small>{item.handle}</small>}
-          </span>
-        </article>
-      ))}
-    </div>
+    {variant === "qr-strip" ? (
+      <>
+        <header class="social-links-cards__strip-header">
+          <h2 class="social-links-cards__strip-title">
+            {titleBeforeAccent}{titleAccent && <em>{titleAccent}</em>}
+          </h2>
+          {subline && <p>{subline}</p>}
+        </header>
+        <div class="social-links-cards__strip-grid">
+          {stripItems.map((item) => (
+            <article class="social-links-cards__strip-card">
+              <a
+                class="social-links-cards__strip-button"
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Открыть ${item.name}`}
+                style={`background: ${item.gradient || item.color || "#000000"}`}
+              >
+                {item.iconPath ? (
+                  <svg viewBox={item.viewBox ?? "0 0 24 24"} width="28" height="28" fill="currentColor" aria-hidden="true">
+                    <path d={item.iconPath} fill-rule={item.fillRule} clip-rule={item.clipRule} />
+                  </svg>
+                ) : (
+                  <span aria-hidden="true">{item.name.slice(0, 2)}</span>
+                )}
+              </a>
+              {item.qrSrc && (
+                <a
+                  class="social-links-cards__strip-qr-link"
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Открыть ${item.name} по QR-коду`}
+                >
+                  <img
+                    src={item.qrSrc}
+                    alt={item.qrAlt ?? `QR-код ${item.name}`}
+                    width="256"
+                    height="256"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </a>
+              )}
+            </article>
+          ))}
+        </div>
+      </>
+    ) : (
+      <>
+        <header>
+          <h2>{title}</h2>
+          {subline && <p>{subline}</p>}
+        </header>
+        <div class="social-links-cards__grid">
+          {items.map((item) => (
+            <article class="social-links-cards__card">
+              <a class="social-links-cards__button" href={item.href} target="_blank" rel="noopener noreferrer" style={`background: ${item.gradient || item.color || "#000000"}`}>
+                {item.iconPath ? (
+                  <svg viewBox={item.viewBox ?? "0 0 24 24"} width="24" height="24" fill="currentColor" aria-hidden="true">
+                    <path d={item.iconPath} fill-rule={item.fillRule} clip-rule={item.clipRule} />
+                  </svg>
+                ) : (
+                  <span>{item.name.slice(0, 2)}</span>
+                )}
+                <strong>Написать в {item.name}</strong>
+              </a>
+              <details class="social-links-cards__qr-toggle">
+                <summary>{item.hint || "Показать QR"}</summary>
+                <span class="social-links-cards__qr">
+                  {item.qrSrc ? <img src={item.qrSrc} alt={item.qrAlt ?? `QR-код ${item.name}`} loading="lazy" /> : <i aria-label={`QR-код ${item.name}`} />}
+                </span>
+              </details>
+              <span class="social-links-cards__meta">
+                <strong>{item.name}</strong>
+                {item.handle && <small>{item.handle}</small>}
+              </span>
+            </article>
+          ))}
+        </div>
+      </>
+    )}
   </div>
 </section>
 
@@ -245,6 +329,145 @@ const {
   @media (max-width: 780px) {
     .social-links-cards__grid {
       grid-template-columns: 1fr;
+    }
+  }
+
+  .social-links-cards--qr-strip {
+    padding: clamp(64px, 7vw, 88px) var(--space-4, 16px) clamp(72px, 8vw, 104px);
+    background: var(--color-background, #f6f4ef);
+  }
+
+  .social-links-cards--qr-strip .social-links-cards__inner {
+    max-width: 1040px;
+  }
+
+  .social-links-cards__strip-header {
+    max-width: 640px;
+    margin: 0 auto 42px;
+    text-align: center;
+  }
+
+  .social-links-cards__strip-title {
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    font-size: clamp(32px, 3.8vw, 48px);
+    font-weight: var(--font-extrabold, 800);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    color: var(--color-text, #152028);
+  }
+
+  .social-links-cards__strip-title em {
+    color: var(--color-accent, #e76525);
+    font: inherit;
+  }
+
+  .social-links-cards--qr-strip .social-links-cards__strip-header p {
+    margin: var(--space-4, 16px) auto 0;
+    color: var(--color-text-muted, #60717d);
+    font-size: clamp(16px, 1.6vw, 18px);
+    line-height: 1.6;
+  }
+
+  .social-links-cards__strip-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 240px));
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .social-links-cards__strip-card {
+    min-width: 0;
+  }
+
+  .social-links-cards__strip-button {
+    display: grid;
+    min-height: 48px;
+    padding: 8px 20px;
+    place-items: center;
+    border-radius: 11px;
+    color: #ffffff;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgb(21 32 40 / 8%);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .social-links-cards__strip-button svg {
+    display: block;
+    width: 28px;
+    height: 28px;
+  }
+
+  .social-links-cards__strip-button > span {
+    font-family: var(--font-heading, sans-serif);
+    font-weight: var(--font-bold, 800);
+  }
+
+  .social-links-cards__strip-qr-link {
+    display: block;
+    aspect-ratio: 1;
+    margin-top: 16px;
+    padding: 18px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-border, #d6dee3) 80%, #ffffff);
+    border-radius: 10px;
+    background: var(--color-surface, #ffffff);
+    box-shadow: 0 14px 36px rgb(21 32 40 / 7%);
+    transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  .social-links-cards__strip-qr-link img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .social-links-cards__strip-button:hover,
+  .social-links-cards__strip-qr-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgb(21 32 40 / 12%);
+  }
+
+  .social-links-cards__strip-button:focus-visible,
+  .social-links-cards__strip-qr-link:focus-visible {
+    outline: 3px solid var(--color-accent, #e76525);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 767px) {
+    .social-links-cards--qr-strip {
+      padding: 48px var(--space-4, 16px) 56px;
+    }
+
+    .social-links-cards__strip-header {
+      margin-bottom: 30px;
+    }
+
+    .social-links-cards__strip-title {
+      font-size: clamp(30px, 9vw, 38px);
+    }
+
+    .social-links-cards__strip-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      width: min(100%, 420px);
+      margin: 0 auto;
+    }
+
+    .social-links-cards__strip-button {
+      min-height: 54px;
+    }
+
+    .social-links-cards__strip-qr-link {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .social-links-cards__strip-button,
+    .social-links-cards__strip-qr-link {
+      transition: none;
     }
   }
 </style>
