@@ -9,7 +9,8 @@
     "preview": "astro preview --host 127.0.0.1",
     "check": "astro check",
     "qr": "node scripts/generate-qr.mjs",
-    "test:hero": "node scripts/verify-hero.mjs all"
+    "test:hero": "node scripts/verify-hero.mjs all",
+    "test:social-qr": "node scripts/verify-social-qr.mjs"
   },
   "dependencies": {
     "astro": "^7.0.7",
