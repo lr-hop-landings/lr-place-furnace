@@ -12,25 +12,34 @@ interface Props {
 }
 
 const { headline, subline, items } = Astro.props;
+const stepCount = items.length;
 ---
 
-<section class="features-grid">
+<section class="features-grid" data-installation-route>
   <div class="features-grid__inner">
     <header class="features-grid__header">
+      <p class="features-grid__eyebrow">Монтаж под ключ · {stepCount} этапов</p>
       <h2>{headline}</h2>
-      {subline && <p>{subline}</p>}
+      {subline && <p class="features-grid__subline">{subline}</p>}
     </header>
-    <div class="features-grid__grid">
-      {items.map((item) => (
-        <article class="features-grid__card">
-          <div class="features-grid__icon" aria-hidden="true">
-            {item.icon ? <img src={item.icon} alt="" loading="lazy" /> : <span />}
-          </div>
+
+    <ol class="features-grid__route">
+      {items.map((item, index) => (
+        <li
+          class:list={[
+            "features-grid__card",
+            { "features-grid__card--milestone": index === 3 || index === 7 },
+          ]}
+          data-route-step={index + 1}
+        >
+          <span class="features-grid__number" aria-hidden="true">
+            {String(index + 1).padStart(2, "0")}
+          </span>
           <h3>{item.title}</h3>
           <p>{item.text}</p>
-        </article>
+        </li>
       ))}
-    </div>
+    </ol>
   </div>
 </section>
 
