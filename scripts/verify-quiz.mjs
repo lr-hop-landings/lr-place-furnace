@@ -71,12 +71,12 @@ async function verifyBehavior() {
   const ids = await root.locator("[id]").evaluateAll((elements) => elements.map((element) => element.id));
   check(ids.length === new Set(ids).size, "quiz contains duplicate IDs");
 
-  const sectionHeightBefore = await root.evaluate((element) => element.getBoundingClientRect().height);
   await page.locator(`${inlineForm} [name="object_type"][value="Частный дом"]`).check();
   check(await page.locator(`${modalForm} [name="object_type"][value="Частный дом"]`).isChecked(), "inline radio did not mirror to modal");
   await page.locator(`${inlineForm} [data-quiz-next]`).click();
   check((await page.locator('[data-quiz-view="inline"] [data-quiz-step-label]').textContent())?.includes("2 из 6"), "inline step did not advance");
   check((await page.locator('[data-quiz-view="modal"] [data-quiz-step-label]').textContent())?.includes("2 из 6"), "modal step did not synchronize");
+  const sectionHeightBeforeOpen = await root.evaluate((element) => element.getBoundingClientRect().height);
 
   const opener = page.locator("[data-quiz-open]");
   await opener.focus();
@@ -84,7 +84,7 @@ async function verifyBehavior() {
   const modal = page.locator("[data-quiz-modal]");
   check((await modal.getAttribute("aria-hidden")) === "false", "modal did not open");
   const sectionHeightOpen = await root.evaluate((element) => element.getBoundingClientRect().height);
-  check(Math.abs(sectionHeightOpen - sectionHeightBefore) <= 1, `opening modal changed section height by ${sectionHeightOpen - sectionHeightBefore}px`);
+  check(Math.abs(sectionHeightOpen - sectionHeightBeforeOpen) <= 1, `opening modal changed section height by ${sectionHeightOpen - sectionHeightBeforeOpen}px`);
   check((await page.locator('[data-quiz-view="modal"] [data-quiz-step-label]').textContent())?.includes("2 из 6"), "modal opened on the wrong step");
 
   await page.locator(`${modalForm} [name="house_type"][value="Дерево"]`).check();
@@ -93,7 +93,7 @@ async function verifyBehavior() {
   check((await modal.getAttribute("aria-hidden")) === "true", "Escape did not close modal");
   check(await opener.evaluate((element) => document.activeElement === element), "focus did not return to modal opener");
   const sectionHeightClosed = await root.evaluate((element) => element.getBoundingClientRect().height);
-  check(Math.abs(sectionHeightClosed - sectionHeightBefore) <= 1, `closing modal changed section height by ${sectionHeightClosed - sectionHeightBefore}px`);
+  check(Math.abs(sectionHeightClosed - sectionHeightBeforeOpen) <= 1, `closing modal changed section height by ${sectionHeightClosed - sectionHeightBeforeOpen}px`);
 
   await page.locator(`${inlineForm} [data-quiz-next]`).click();
   await chooseAndAdvance(page, inlineForm, "stove_status", "Уже куплена");
