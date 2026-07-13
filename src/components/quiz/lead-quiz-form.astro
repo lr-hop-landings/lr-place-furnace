@@ -1,0 +1,442 @@
+---
+interface QuizStep {
+  question: string;
+  options: string[];
+}
+
+interface Props {
+  instance: "inline" | "modal";
+  quizId: string;
+  steps: QuizStep[];
+  submitText: string;
+  privacyText: string;
+}
+
+const { instance, quizId, steps, submitText, privacyText } = Astro.props;
+const prefix = `${quizId}-${instance}`;
+const stepNames = ["object_type", "house_type", "stove_status", "services[]", "chimney_route"];
+const totalSteps = steps.length + 1;
+---
+
+<div class="lead-quiz-form" data-quiz-view={instance} data-lead-root>
+  <div class="lead-quiz-form__topline">
+    <p data-quiz-step-label>Шаг 1 из {totalSteps}</p>
+    {instance === "inline" && (
+      <button class="lead-quiz-form__expand" type="button" data-quiz-open>
+        <span aria-hidden="true">↗</span>
+        Открыть в большом окне
+      </button>
+    )}
+  </div>
+
+  <div
+    class="lead-quiz-form__progress"
+    role="progressbar"
+    aria-label="Прогресс расчёта"
+    aria-valuemin="1"
+    aria-valuemax={totalSteps}
+    aria-valuenow="1"
+  >
+    <span data-quiz-progress style={`width: ${100 / totalSteps}%`}></span>
+  </div>
+
+  <form
+    id={`${prefix}-form`}
+    class="lead-quiz-form__form"
+    data-quiz-form
+    data-quiz-instance={instance}
+    data-hop-lead-form
+    novalidate
+  >
+    <input type="hidden" name="quiz_service" value="Установка металлической печи" />
+    <input type="hidden" name="phone" data-phone-value value="" />
+
+    {steps.map((step, stepIndex) => (
+      <fieldset
+        class:list={["lead-quiz-form__step", { "is-active": stepIndex === 0 }]}
+        data-quiz-step
+      >
+        <legend>{step.question}</legend>
+        <div class="lead-quiz-form__options">
+          {step.options.map((option, optionIndex) => {
+            const optionId = `${prefix}-step-${stepIndex}-option-${optionIndex}`;
+            return (
+              <label class="lead-quiz-form__option" for={optionId}>
+                <input
+                  id={optionId}
+                  type={stepIndex === 3 ? "checkbox" : "radio"}
+                  name={stepNames[stepIndex]}
+                  value={option}
+                />
+                <span>{option}</span>
+              </label>
+            );
+          })}
+        </div>
+        <p class="lead-quiz-form__error" data-step-error hidden>Выберите подходящий вариант.</p>
+      </fieldset>
+    ))}
+
+    <fieldset class="lead-quiz-form__step" data-quiz-step>
+      <legend>Куда отправить предварительный расчёт?</legend>
+      <div class="lead-quiz-form__fields">
+        <label class="lead-quiz-form__name-field" for={`${prefix}-name`}>
+          <span>Имя</span>
+          <input id={`${prefix}-name`} type="text" name="name" autocomplete="name" placeholder="Как к вам обращаться" />
+        </label>
+
+        <label class="lead-quiz-form__desktop-phone" for={`${prefix}-phone`}>
+          <span>Телефон *</span>
+          <input id={`${prefix}-phone`} type="tel" data-phone-input autocomplete="tel" inputmode="tel" placeholder="+7 (___) ___-__-__" />
+        </label>
+
+        <div class="lead-quiz-form__dialpad" data-dialpad>
+          <span>Телефон *</span>
+          <output data-dialpad-display aria-live="polite">+7</output>
+          <div class="lead-quiz-form__keys" aria-label="Цифровая клавиатура">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => (
+              <button type="button" data-digit={digit}>{digit}</button>
+            ))}
+            <button type="button" data-clear aria-label="Очистить номер">C</button>
+            <button type="button" data-digit="0">0</button>
+            <button type="button" data-backspace aria-label="Удалить последнюю цифру">⌫</button>
+          </div>
+        </div>
+
+        <label for={`${prefix}-location`}>
+          <span>Населённый пункт *</span>
+          <input id={`${prefix}-location`} type="text" name="location" autocomplete="address-level2" required placeholder="Например, Всеволожск" />
+        </label>
+
+        <label for={`${prefix}-stove-model`}>
+          <span>Модель печи</span>
+          <input id={`${prefix}-stove-model`} type="text" name="stove_model" placeholder="Название или модель" />
+        </label>
+
+        <label for={`${prefix}-photos`}>
+          <span>Фотографии</span>
+          <input
+            id={`${prefix}-photos`}
+            type="file"
+            name="photos[]"
+            data-file-input
+            multiple
+            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+          />
+          <small data-file-summary>Файлы не выбраны</small>
+        </label>
+
+        <fieldset class="lead-quiz-form__contact-method">
+          <legend>Удобный способ ответа</legend>
+          {["Звонок", "VK", "Telegram", "MAX"].map((method, index) => {
+            const methodId = `${prefix}-contact-${index}`;
+            return (
+              <label for={methodId}>
+                <input id={methodId} type="radio" name="contact_method" value={method} checked={index === 0} />
+                {method}
+              </label>
+            );
+          })}
+        </fieldset>
+
+        <label for={`${prefix}-comment`}>
+          <span>Комментарий</span>
+          <textarea id={`${prefix}-comment`} name="comment" placeholder="Что важно учесть"></textarea>
+        </label>
+
+        <label class="lead-quiz-form__consent" for={`${prefix}-consent`}>
+          <input id={`${prefix}-consent`} type="checkbox" name="consent" value="Да" required />
+          <span>{privacyText}</span>
+        </label>
+      </div>
+      <p class="lead-quiz-form__error" data-contact-error hidden>Проверьте телефон, населённый пункт и согласие.</p>
+    </fieldset>
+
+    <div class="lead-quiz-form__actions">
+      <button type="button" data-quiz-back>Назад</button>
+      <button type="button" data-quiz-next>Далее</button>
+      <button type="submit" data-quiz-submit hidden>{submitText}</button>
+    </div>
+    <p class="lead-quiz-form__privacy">Расчёт по фотографиям предварительный. Точная смета — после получения необходимых параметров.</p>
+  </form>
+
+  <div class="lead-quiz-form__status" data-lead-status tabindex="-1" hidden></div>
+  <div class="lead-quiz-form__success" data-lead-success hidden>
+    Спасибо! Данные получены. Мы изучим параметры и свяжемся выбранным способом.
+  </div>
+</div>
+
+<style>
+  .lead-quiz-form {
+    min-width: 0;
+    padding: clamp(20px, 3vw, 30px);
+    border: 1px solid rgb(21 32 40 / 8%);
+    border-radius: 20px;
+    background: var(--color-surface, #ffffff);
+    color: var(--color-text, #152028);
+    box-shadow: 0 24px 70px rgb(3 17 28 / 24%);
+  }
+
+  .lead-quiz-form__topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .lead-quiz-form__topline p {
+    margin: 0;
+    color: var(--color-accent, #e76525);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+
+  .lead-quiz-form__expand {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    color: var(--color-text-muted, #60717d);
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .lead-quiz-form__expand span {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border-radius: 9px;
+    background: var(--color-background, #f6f4ef);
+  }
+
+  .lead-quiz-form__progress {
+    height: 7px;
+    margin: 16px 0 26px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--color-border, #d6dee3);
+  }
+
+  .lead-quiz-form__progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-accent, #e76525);
+    transition: width .2s ease;
+  }
+
+  .lead-quiz-form__step {
+    display: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .lead-quiz-form__step.is-active { display: block; }
+
+  .lead-quiz-form__step > legend {
+    margin-bottom: 18px;
+    font-family: var(--font-heading, sans-serif);
+    font-size: clamp(20px, 2vw, 26px);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .lead-quiz-form__options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .lead-quiz-form__option {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    min-height: 54px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border, #d6dee3);
+    border-radius: 12px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: border-color .16s ease, background .16s ease, transform .16s ease;
+  }
+
+  .lead-quiz-form__option:hover { transform: translateY(-1px); }
+
+  .lead-quiz-form__option:has(input:checked) {
+    border-color: var(--color-accent, #e76525);
+    background: var(--color-accent-light, #ffefe5);
+  }
+
+  .lead-quiz-form input[type="radio"],
+  .lead-quiz-form input[type="checkbox"] {
+    accent-color: var(--color-accent, #e76525);
+  }
+
+  .lead-quiz-form__fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+  }
+
+  .lead-quiz-form__fields > label {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .lead-quiz-form input:not([type="radio"]):not([type="checkbox"]),
+  .lead-quiz-form textarea {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border, #d6dee3);
+    border-radius: 12px;
+    color: var(--color-text, #152028);
+    background: #ffffff;
+    font: inherit;
+  }
+
+  .lead-quiz-form input[type="file"] { padding: 9px; }
+  .lead-quiz-form textarea { min-height: 100px; resize: vertical; }
+
+  .lead-quiz-form small[data-file-summary] {
+    overflow-wrap: anywhere;
+    color: var(--color-text-muted, #60717d);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .lead-quiz-form__contact-method {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--color-border, #d6dee3);
+    border-radius: 14px;
+  }
+
+  .lead-quiz-form__contact-method legend { padding: 0 5px; font-weight: 800; }
+  .lead-quiz-form__contact-method label { display: flex; gap: 6px; align-items: center; }
+
+  .lead-quiz-form__consent {
+    grid-column: 1 / -1;
+    grid-template-columns: 22px minmax(0, 1fr) !important;
+    align-items: start;
+    font-weight: 500 !important;
+    line-height: 1.45;
+  }
+
+  .lead-quiz-form__dialpad { display: none; }
+
+  .lead-quiz-form__error {
+    margin: 12px 0 0;
+    color: #b42318;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .lead-quiz-form__actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .lead-quiz-form__actions button {
+    min-height: 50px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: var(--radius-button, 12px);
+    color: #ffffff;
+    background: var(--color-accent, #e76525);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+  }
+
+  .lead-quiz-form__actions [data-quiz-back] {
+    color: var(--color-text, #152028);
+    background: var(--color-background, #f6f4ef);
+  }
+
+  .lead-quiz-form__privacy {
+    margin: 13px 0 0;
+    color: var(--color-text-muted, #60717d);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .lead-quiz-form__status,
+  .lead-quiz-form__success {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--color-accent-light, #ffefe5);
+    color: var(--color-text, #152028);
+  }
+
+  .lead-quiz-form button:focus-visible,
+  .lead-quiz-form input:focus-visible,
+  .lead-quiz-form textarea:focus-visible,
+  .lead-quiz-form__option:focus-within {
+    outline: 3px solid var(--color-accent, #e76525);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 760px) {
+    .lead-quiz-form { padding: 20px 16px; border-radius: 18px; }
+    .lead-quiz-form__topline { align-items: flex-start; }
+    .lead-quiz-form__expand { max-width: 138px; justify-content: flex-end; text-align: right; }
+    .lead-quiz-form__options,
+    .lead-quiz-form__fields { grid-template-columns: 1fr; }
+    .lead-quiz-form__name-field,
+    .lead-quiz-form__desktop-phone { display: none !important; }
+    .lead-quiz-form__dialpad {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--color-border, #d6dee3);
+      border-radius: 16px;
+    }
+    .lead-quiz-form__dialpad output {
+      display: grid;
+      min-height: 52px;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--color-background, #f6f4ef);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+    .lead-quiz-form__keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .lead-quiz-form__keys button {
+      min-height: 50px;
+      border: 1px solid var(--color-border, #d6dee3);
+      border-radius: 11px;
+      color: var(--color-text, #152028);
+      background: #ffffff;
+      font-weight: 800;
+    }
+    .lead-quiz-form__contact-method,
+    .lead-quiz-form__consent { grid-column: auto; }
+    .lead-quiz-form__actions button { flex: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lead-quiz-form__progress span,
+    .lead-quiz-form__option { transition: none; }
+  }
+</style>
