@@ -1,5 +1,6 @@
 import { chromium } from "playwright";
 import { access, mkdir, readFile } from "node:fs/promises";
+import sharp from "sharp";
 
 const baseURL = process.env.SITE_URL ?? "http://127.0.0.1:4321";
 const route = new URL("/ustanovka-metallicheskih-pechey/", baseURL).href;
@@ -94,14 +95,29 @@ async function verifyLayout() {
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       check(overflow <= 1, `${viewport.name}: page overflows horizontally by ${overflow}px`);
 
-      const clip = await lineup.evaluate((element) => {
+      const region = await lineup.evaluate((element) => {
         const first = element.getBoundingClientRect();
         const third = element.nextElementSibling?.nextElementSibling?.getBoundingClientRect();
-        const y = first.top + window.scrollY;
+        const y = Math.max(0, first.top + window.scrollY);
         const bottom = (third?.bottom ?? first.bottom) + window.scrollY;
         return { x: 0, y, width: document.documentElement.clientWidth, height: bottom - y };
       });
-      await page.screenshot({ path: `artifacts/section-removal-transition-${viewport.name}.png`, clip });
+      const artifactPath = `artifacts/section-removal-transition-${viewport.name}.png`;
+      const fullPageScreenshot = await page.screenshot({ fullPage: true });
+      await sharp(fullPageScreenshot)
+        .extract({
+          left: Math.floor(region.x),
+          top: Math.floor(region.y),
+          width: Math.floor(region.width),
+          height: Math.ceil(region.height),
+        })
+        .png()
+        .toFile(artifactPath);
+      const artifactMetadata = await sharp(artifactPath).metadata();
+      check(
+        artifactMetadata.height >= Math.floor(region.height),
+        `${viewport.name}: transition artifact is clipped to the viewport`,
+      );
       await page.close();
     }
   } finally {
