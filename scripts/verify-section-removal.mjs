@@ -13,6 +13,7 @@ const removedHeadlines = [
   "Монтаж печи в деревянном, каркасном или каменном доме",
   "Из чего складывается расчёт установки",
   "Как проходит установка металлической печи",
+  "Отзывы об установке металлических печей",
 ];
 
 function check(condition, message) {
@@ -39,20 +40,24 @@ async function verifyStructure() {
   check(!page.includes('import Block7 from "../components/features/materials-card-grid-01.astro"'), "Block7 import remains");
   check(!page.includes("pricing-service-table-02.astro"), "pricing import remains");
   check(!page.includes('import Block12 from "../components/steps/steps-numbered-grid-01.astro"'), "Block12 import remains");
+  check(!page.includes('import Block15 from "../components/reviews/reviews-gallery-cards-01.astro"'), "Block15 import remains");
   check(!/<Block6\b/.test(page), "Block6 render remains");
   check(!/<Block7\b/.test(page), "Block7 render remains");
   check(!/<Block9\b/.test(page), "Block9 render remains");
   check(!/<Block12\b/.test(page), "Block12 render remains");
+  check(!/<Block15\b/.test(page), "Block15 render remains");
   check(/<Block5\s+\{\.\.\.blockProps\[4\]\}\s+variant="equipment-lineup"\s*\/>/.test(page), "Block5 wiring changed");
   check(/<Block8\s+\{\.\.\.blockProps\[5\]\}\s*\/>/.test(page), "Block8 must consume blockProps[5]");
   check(/<Block10\s+\{\.\.\.blockProps\[6\]\}\s*\/>/.test(page), "Block10 must consume blockProps[6]");
   check(/<Block11\s+\{\.\.\.blockProps\[7\]\}\s+variant="qr-strip"\s+showQr=\{false\}\s*\/>/.test(page), "Block11 must consume blockProps[7]");
   check(/<Block14\s+\{\.\.\.blockProps\[8\]\}\s*\/>/.test(page), "Block14 must consume blockProps[8]");
-  check(/<Block17\s+\{\.\.\.blockProps\[11\]\}\s*\/>/.test(page), "Block17 must consume blockProps[11]");
+  check(/<Block16\s+\{\.\.\.blockProps\[9\]\}\s*\/>/.test(page), "Block16 must consume blockProps[9]");
+  check(/<Block17\s+\{\.\.\.blockProps\[10\]\}\s*\/>/.test(page), "Block17 must consume blockProps[10]");
 
   check(!(await pathExists("src/components/comparison/comparison-method-table-02.astro")), "unused comparison component still exists");
   check(!(await pathExists("src/components/pricing/pricing-service-table-02.astro")), "unused pricing component still exists");
   check(!(await pathExists("src/components/steps/steps-numbered-grid-01.astro")), "unused Block12 component still exists");
+  check(!(await pathExists("src/components/reviews/reviews-gallery-cards-01.astro")), "unused Block15 component remains");
   check(await pathExists("src/components/features/materials-card-grid-01.astro"), "Block5 component was removed");
   check(!(await pathExists("artifacts/materials-card-grid-block7-desktop.png")), "obsolete Block7 artifact still exists");
 }
@@ -93,11 +98,18 @@ async function verifyLayout() {
         await photoSocial.evaluate((element) => element.nextElementSibling?.classList.contains("guarantee-certificate")),
         `${viewport.name}: document card must immediately follow the photo social strip`,
       );
+      const documentCard = page.locator(".guarantee-certificate");
+      check(
+        await documentCard.evaluate((element) => element.nextElementSibling?.classList.contains("faq-accordion")),
+        `${viewport.name}: FAQ must immediately follow the document card`,
+      );
+      check((await page.locator(".review-cards").count()) === 0, `${viewport.name}: empty reviews block remains`);
       check((await page.locator(".method-comparison").count()) === 0, `${viewport.name}: comparison block remains`);
       check((await page.locator('[data-card-grid-variant="cards"]').count()) === 0, `${viewport.name}: house card grid remains`);
       check((await page.locator(".service-prices").count()) === 0, `${viewport.name}: pricing block remains`);
 
       const bodyText = await page.locator("body").innerText();
+      check(!bodyText.includes("Без вымышленных цитат"), `${viewport.name}: review fallback copy remains`);
       for (const headline of removedHeadlines) {
         check(!bodyText.includes(headline), `${viewport.name}: removed headline remains: ${headline}`);
       }
