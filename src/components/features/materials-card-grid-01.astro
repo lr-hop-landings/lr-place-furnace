@@ -4,6 +4,7 @@ interface Item {
   text: string;
   price?: string;
   image?: string;
+  imageAlt?: string;
 }
 
 interface Props {
@@ -11,52 +12,88 @@ interface Props {
   subline?: string;
   items: Item[];
   label?: string;
+  variant?: "cards" | "equipment-lineup";
 }
 
-const { headline, subline, items, label = "Стоимость" } = Astro.props;
+const { headline, subline, items, label = "Стоимость", variant = "cards" } = Astro.props;
+const isEquipmentLineup = variant === "equipment-lineup";
 ---
 
-<section class="card-grid">
+<section
+  class:list={["card-grid", { "card-grid--equipment-lineup": isEquipmentLineup }]}
+  data-card-grid-variant={variant}
+  data-equipment-lineup={isEquipmentLineup ? "" : undefined}
+>
   <div class="card-grid__inner">
     <header class="card-grid__header">
+      {isEquipmentLineup && <p class="card-grid__eyebrow">Готовые металлические печи</p>}
       <h2>{headline}</h2>
-      {subline && <p>{subline}</p>}
+      {subline && <p class="card-grid__subline">{subline}</p>}
     </header>
-    <div
-      class="card-grid__slider swiper"
-      data-swiper-options='{"slidesPerView":1,"spaceBetween":20,"breakpoints":{"680":{"slidesPerView":2},"1040":{"slidesPerView":3}}}'
-    >
-      <div class="card-grid__items swiper-wrapper">
-      {items.map((item) => (
-        <article class="card-grid__card swiper-slide">
-          {item.image ? (
-            <a class="card-grid__image glightbox" href={item.image} data-gallery="card-grid" data-title={item.name}>
-              <img src={item.image} alt={item.name} loading="lazy" />
-            </a>
-          ) : (
-            <div class="card-grid__image" aria-label="Плейсхолдер изображения">
-              <div class="card-grid__image-placeholder"></div>
+
+    {isEquipmentLineup ? (
+      <ul class="card-grid__lineup">
+        {items.map((item, index) => (
+          <li class="card-grid__lineup-item">
+            <div class="card-grid__lineup-visual">
+              {item.image && (
+                <img
+                  src={item.image}
+                  alt={item.imageAlt ?? item.name}
+                  width="960"
+                  height="1200"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
             </div>
-          )}
-          <div class="card-grid__body">
-            <h3>{item.name}</h3>
-            <p>{item.text}</p>
-            {item.price && (
-              <div class="card-grid__footer">
-                <span>{label}</span>
-                <strong>{item.price}</strong>
+            <div class="card-grid__lineup-body">
+              <span class="card-grid__lineup-number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h3>{item.name}</h3>
+              <p>{item.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div
+        class="card-grid__slider swiper"
+        data-swiper-options='{"slidesPerView":1,"spaceBetween":20,"breakpoints":{"680":{"slidesPerView":2},"1040":{"slidesPerView":3}}}'
+      >
+        <div class="card-grid__items swiper-wrapper">
+          {items.map((item) => (
+            <article class="card-grid__card swiper-slide">
+              {item.image ? (
+                <a class="card-grid__image glightbox" href={item.image} data-gallery="card-grid" data-title={item.name}>
+                  <img src={item.image} alt={item.imageAlt ?? item.name} loading="lazy" />
+                </a>
+              ) : (
+                <div class="card-grid__image" aria-label="Плейсхолдер изображения">
+                  <div class="card-grid__image-placeholder"></div>
+                </div>
+              )}
+              <div class="card-grid__body">
+                <h3>{item.name}</h3>
+                <p>{item.text}</p>
+                {item.price && (
+                  <div class="card-grid__footer">
+                    <span>{label}</span>
+                    <strong>{item.price}</strong>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </article>
-      ))}
+            </article>
+          ))}
+        </div>
+        <div class="card-grid__nav" aria-label="Card slider controls">
+          <button class="swiper-button-prev" type="button" aria-label="Предыдущая карточка">Назад</button>
+          <button class="swiper-button-next" type="button" aria-label="Следующая карточка">Вперед</button>
+        </div>
+        <div class="swiper-pagination"></div>
       </div>
-      <div class="card-grid__nav" aria-label="Card slider controls">
-        <button class="swiper-button-prev" type="button" aria-label="Предыдущая карточка">Назад</button>
-        <button class="swiper-button-next" type="button" aria-label="Следующая карточка">Вперед</button>
-      </div>
-      <div class="swiper-pagination"></div>
-    </div>
+    )}
   </div>
 </section>
 
