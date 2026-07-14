@@ -74,6 +74,11 @@ async function verifyBehavior() {
     const previous = section.locator(".swiper-button-prev");
 
     await slider.waitFor({ state: "visible" });
+    check(
+      (await section.locator("h2").textContent())?.replace(/\s+/g, " ").trim() ===
+        "Монтажи, где важна каждая деталь",
+      "case heading parts must have semantic whitespace",
+    );
     await page.waitForFunction(() => document.querySelector("[data-real-case-slider] .swiper")?.classList.contains("swiper-initialized"));
     check((await current.textContent())?.trim() === "01", "counter must start at 01");
     check((await total.textContent())?.trim() === "03", "counter total must be 03");

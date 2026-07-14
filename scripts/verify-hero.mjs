@@ -45,6 +45,11 @@ async function verifyContent() {
     );
   }
   check((await page.locator(".hero-visual h1").count()) === 1, "hero must keep exactly one h1");
+  check(
+    (await page.locator(".hero-visual h1").textContent())?.replace(/\s+/g, " ").trim() ===
+      "Установка металлических печей в Санкт-Петербурге и Ленинградской области",
+    "hero heading parts must have semantic whitespace",
+  );
   const componentSource = await readFile("src/components/hero/hero-visual-price-01.astro", "utf8");
   check(componentSource.includes("hero-visual__blueprint"), "blueprint fallback branch was removed");
   await page.close();
