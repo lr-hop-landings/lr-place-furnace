@@ -18,7 +18,8 @@
     "test:compatibility-system": "node scripts/verify-compatibility-system.mjs all",
     "test:case-slider": "node scripts/verify-case-slider.mjs all",
     "test:document-card": "node scripts/verify-document-card.mjs",
-    "test:faq": "node scripts/verify-faq.mjs"
+    "test:faq": "node scripts/verify-faq.mjs",
+    "test:contact-form": "node scripts/verify-contact-form.mjs"
   },
   "dependencies": {
     "astro": "^7.0.7",
