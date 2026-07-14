@@ -9,7 +9,6 @@ import Block8 from "../components/features/equipment-process-02.astro";
 import Block10 from "../components/cases/cases-emergency-slider-02.astro";
 import Block11 from "../components/contacts/social-links-cards-01.astro";
 import Block14 from "../components/guarantees/guarantee-certificate-01.astro";
-import Block15 from "../components/reviews/reviews-gallery-cards-01.astro";
 import Block16 from "../components/faq/faq-accordion-01.astro";
 import Block17 from "../components/contacts/contact-form-card-01.astro";
 
@@ -299,13 +298,6 @@ const blockProps: any[] = [
         "ctaHref":  "#estimate-quiz"
     },
     {
-        "headline":  "Отзывы об установке металлических печей",
-        "subline":  "Публикуем только отзывы, которые можно подтвердить источником и согласованием автора.",
-        "items":  [
-
-                  ]
-    },
-    {
         "headline":  "Частые вопросы об установке металлических печей",
         "subline":  "Если вашей ситуации нет в списке, отправьте фотографию в VK, Telegram или MAX.",
         "items":  [
@@ -400,8 +392,7 @@ const blockProps: any[] = [
     <Block10 {...blockProps[6]} />
     <Block11 {...blockProps[7]} variant="qr-strip" showQr={false} />
     <Block14 {...blockProps[8]} />
-    <Block15 {...blockProps[9]} />
-    <Block16 {...blockProps[10]} />
-    <Block17 {...blockProps[11]} />
+    <Block16 {...blockProps[9]} />
+    <Block17 {...blockProps[10]} />
   </main>
 </BaseLayout>

@@ -36,7 +36,7 @@ async function verifyStructure() {
   check(!/<Block13\b/.test(page), "Block13 render remains");
   check(!(await pathExists("src/components/trust-bar/trust-company-proof-02.astro")), "unused Block13 component remains");
   check(/<Block14\s+\{\.\.\.blockProps\[8\]\}\s*\/>/.test(page), "Block14 must consume blockProps[8]");
-  check(/<Block17\s+\{\.\.\.blockProps\[11\]\}\s*\/>/.test(page), "Block17 must consume blockProps[11]");
+  check(/<Block17\s+\{\.\.\.blockProps\[10\]\}\s*\/>/.test(page), "Block17 must consume blockProps[10]");
   check(!page.includes('"summaryTitle"') && !page.includes('"summaryText"'), "service-only summary data remains");
   check(!component.includes("summaryTitle") && !component.includes("summaryText"), "summary API remains");
   check(!component.includes("guarantee-certificate__summary"), "summary markup or styles remain");
