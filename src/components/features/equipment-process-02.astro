@@ -2,6 +2,7 @@
 interface Item {
   title: string;
   text: string;
+  icon?: "stove" | "structure" | "route";
 }
 
 interface Props {
@@ -14,28 +15,51 @@ const {
   eyebrow = "Инструменты",
   headline = "Оборудование встроено в процесс, а не показано ради эффекта",
   items = [
-    { title: "Диагностика", text: "Выбираем метод после осмотра материалов и источника проблемы." },
-    { title: "Обработка", text: "Комбинируем механическую очистку, составы, туман или озон." },
-    { title: "Контроль", text: "Проверяем, что обработка не конфликтует с дальнейшим ремонтом или проживанием." },
+    { title: "Диагностика", text: "Выбираем метод после осмотра материалов и источника проблемы.", icon: "stove" },
+    { title: "Обработка", text: "Комбинируем механическую очистку, составы, туман или озон.", icon: "structure" },
+    { title: "Контроль", text: "Проверяем, что обработка не конфликтует с дальнейшим ремонтом или проживанием.", icon: "route" },
   ],
 } = Astro.props;
 ---
 
-<section class="equipment-process">
+<section class="equipment-process" data-compatibility-system>
   <div class="equipment-process__inner">
-    <header>
-      {eyebrow && <p>{eyebrow}</p>}
+    <header class="equipment-process__header">
+      {eyebrow && <p class="equipment-process__eyebrow">{eyebrow}</p>}
       <h2>{headline}</h2>
     </header>
-    <div class="equipment-process__items">
+    <ol class="equipment-process__items">
       {items.map((item, index) => (
-        <article>
-          <span>{String(index + 1).padStart(2, "0")}</span>
-          <h3>{item.title}</h3>
-          <p>{item.text}</p>
-        </article>
+        <li class="equipment-process__item" data-icon={item.icon}>
+          <span class="equipment-process__marker">{String(index + 1).padStart(2, "0")}</span>
+          {item.icon && (
+            <div class="equipment-process__icon">
+              {item.icon === "stove" && (
+                <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+                  <path d="M18 14h28v38H18z M23 22h18v18H23z M22 52l-3 6 M42 52l3 6 M26 9h12v5" />
+                  <circle cx="37" cy="45" r="1.5" />
+                </svg>
+              )}
+              {item.icon === "structure" && (
+                <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+                  <path d="M10 30 32 12l22 18v24H10z M18 26v28 M46 26v28 M10 39h44 M24 54V38h16v16" />
+                </svg>
+              )}
+              {item.icon === "route" && (
+                <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+                  <path d="M12 50h15V30h13V13h12 M46 8l6 5-6 5 M19 24l8 6-8 6" />
+                  <circle cx="12" cy="50" r="3" />
+                </svg>
+              )}
+            </div>
+          )}
+          <div class="equipment-process__copy">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        </li>
       ))}
-    </div>
+    </ol>
   </div>
 </section>
 
