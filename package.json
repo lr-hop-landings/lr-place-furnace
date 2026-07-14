@@ -15,7 +15,8 @@
     "test:installation-route": "node scripts/verify-installation-route.mjs all",
     "test:equipment-lineup": "node scripts/verify-equipment-lineup.mjs all",
     "test:section-removal": "node scripts/verify-section-removal.mjs all",
-    "test:compatibility-system": "node scripts/verify-compatibility-system.mjs all"
+    "test:compatibility-system": "node scripts/verify-compatibility-system.mjs all",
+    "test:case-slider": "node scripts/verify-case-slider.mjs all"
   },
   "dependencies": {
     "astro": "^7.0.7",
