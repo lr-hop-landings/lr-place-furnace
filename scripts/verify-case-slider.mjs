@@ -139,6 +139,8 @@ async function verifyLayout() {
 
       const columns = await cards.nth(0).evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(" ").filter(Boolean).length);
       check(columns === (viewport.vertical ? 1 : 2), `${viewport.name}: case card orientation is incorrect`);
+      const titleFontSize = await cards.nth(0).locator("h3").evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize));
+      check(viewport.name !== "desktop" || titleFontSize <= 40, `${viewport.name}: case title is too large (${titleFontSize}px)`);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       check(overflow <= 1, `${viewport.name}: page overflows horizontally by ${overflow}px`);
       check((await section.locator('.cases-emergency__placeholder-icon[aria-hidden="true"]').count()) === 3, `${viewport.name}: placeholder icons must be decorative`);
