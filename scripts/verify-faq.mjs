@@ -110,7 +110,7 @@ async function verifyLayout() {
       check(await items.nth(1).evaluate((element) => element.open), `${viewport.name}: second answer did not open`);
       await summaries.nth(1).click();
 
-      await summaries.nth(2).focus();
+      await summaries.nth(1).press("Tab");
       const focusStyle = await summaries.nth(2).evaluate((element) => ({
         outlineStyle: getComputedStyle(element).outlineStyle,
         outlineWidth: getComputedStyle(element).outlineWidth,
@@ -118,11 +118,13 @@ async function verifyLayout() {
       check(focusStyle.outlineStyle !== "none" && Number.parseFloat(focusStyle.outlineWidth) >= 3, `${viewport.name}: visible focus outline is missing`);
 
       await page.emulateMedia({ reducedMotion: "reduce" });
-      const transitionDuration = await summaries.first().locator("i").evaluate((element) => getComputedStyle(element, "::after").transitionDuration);
-      check(transitionDuration === "0s", `${viewport.name}: icon transition remains under reduced motion`);
+      const transitionProperty = await summaries.first().locator("i").evaluate((element) => getComputedStyle(element, "::after").transitionProperty);
+      check(transitionProperty === "none", `${viewport.name}: icon transition remains under reduced motion`);
 
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       check(overflow <= 1, `${viewport.name}: page overflows horizontally by ${overflow}px`);
+      await page.mouse.move(0, 0);
+      await page.evaluate(() => document.activeElement?.blur());
       await section.screenshot({ path: `artifacts/faq-${viewport.name}.png` });
       await page.close();
     }
