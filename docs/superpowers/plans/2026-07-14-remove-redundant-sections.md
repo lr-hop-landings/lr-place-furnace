@@ -6,7 +6,7 @@
 
 **Architecture:** Удаление выполняется в `src/pages/index.astro` на уровне импортов, данных и вызовов компонентов. Два оставшихся без потребителей компонента и устаревший артефакт удаляются, индексы последующих `blockProps` обновляются, а отдельный Node/Playwright-контракт защищает новую последовательность Block5 → Block8 → Block10.
 
-**Tech Stack:** Astro 5, TypeScript в `.astro`, Node.js ESM, Playwright, существующие npm scripts, Git.
+**Tech Stack:** Astro 7, TypeScript в `.astro`, Node.js ESM, Playwright, существующие npm scripts, Git.
 
 ## Global Constraints
 
