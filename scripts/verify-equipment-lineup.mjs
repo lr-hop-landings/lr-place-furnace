@@ -92,6 +92,24 @@ async function itemBoxes(page) {
   );
 }
 
+async function checkLineupImagesLoaded(page, viewportLabel) {
+  const states = await page
+    .locator('[data-card-grid-variant="equipment-lineup"] img')
+    .evaluateAll((images) => images.map((image) => image.complete && image.naturalWidth > 0));
+  check(states.every(Boolean), `${viewportLabel} screenshot must wait for all lineup images`);
+}
+
+async function waitForLineupImages(page) {
+  const lineup = page.locator('[data-card-grid-variant="equipment-lineup"]');
+  await lineup.scrollIntoViewIfNeeded();
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll('[data-card-grid-variant="equipment-lineup"] img')].every(
+      (image) => image.complete && image.naturalWidth > 0,
+    ),
+  );
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+}
+
 async function verifyLayout() {
   const { mkdir } = await import("node:fs/promises");
   await mkdir("artifacts", { recursive: true });
@@ -123,6 +141,8 @@ async function verifyLayout() {
   check(uniqueCoordinates(desktopBoxes, "y").length === 1, "1440px lineup must have one row");
   check((await lineup.evaluate((element) => getComputedStyle(element).backgroundColor)) === "rgb(11, 31, 51)", "Block5 must use the primary-dark background");
 
+  await waitForLineupImages(desktop);
+  await checkLineupImagesLoaded(desktop, "desktop");
   await lineup.screenshot({ path: "artifacts/equipment-lineup-desktop.png" });
   await defaultGrid.screenshot({ path: "artifacts/materials-card-grid-block7-desktop.png" });
   await desktop.close();
@@ -131,6 +151,8 @@ async function verifyLayout() {
   const tabletBoxes = await itemBoxes(tablet);
   check(uniqueCoordinates(tabletBoxes, "x").length === 2, "768px lineup must have two columns");
   check(uniqueCoordinates(tabletBoxes, "y").length === 2, "768px lineup must have two rows");
+  await waitForLineupImages(tablet);
+  await checkLineupImagesLoaded(tablet, "tablet");
   await tablet.locator('[data-card-grid-variant="equipment-lineup"]').screenshot({ path: "artifacts/equipment-lineup-tablet.png" });
   await tablet.close();
 
@@ -145,6 +167,8 @@ async function verifyLayout() {
   check(firstImage && firstCopy && firstImage.width < firstCopy.width, "mobile copy must remain wider than its render");
   const overflow = await mobile.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   check(overflow <= 1, `390px page overflows horizontally by ${overflow}px`);
+  await waitForLineupImages(mobile);
+  await checkLineupImagesLoaded(mobile, "mobile");
   await mobile.locator('[data-card-grid-variant="equipment-lineup"]').screenshot({ path: "artifacts/equipment-lineup-mobile.png" });
   await mobile.close();
 }
