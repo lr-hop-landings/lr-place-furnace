@@ -1,6 +1,8 @@
 import Swiper from "swiper";
-import { A11y, Navigation, Pagination } from "swiper/modules";
+import { A11y, Keyboard, Navigation, Pagination } from "swiper/modules";
 import GLightbox from "glightbox";
+
+const formatSliderNumber = (value: number) => String(value).padStart(2, "0");
 
 const initSliders = () => {
   document.querySelectorAll<HTMLElement>(".swiper").forEach((element) => {
@@ -12,8 +14,8 @@ const initSliders = () => {
     } catch {
       options = {};
     }
-    new Swiper(element, {
-      modules: [A11y, Navigation, Pagination],
+    const slider = new Swiper(element, {
+      modules: [A11y, Keyboard, Navigation, Pagination],
       watchOverflow: true,
       a11y: { enabled: true },
       navigation: {
@@ -26,6 +28,18 @@ const initSliders = () => {
       },
       ...options,
     });
+
+    if (element.dataset.swiperCounter === "true") {
+      const current = element.querySelector<HTMLElement>("[data-swiper-current]");
+      const total = element.querySelector<HTMLElement>("[data-swiper-total]");
+      const syncCounter = () => {
+        if (current) current.textContent = formatSliderNumber(slider.realIndex + 1);
+        if (total) total.textContent = formatSliderNumber(slider.slides.length);
+      };
+      syncCounter();
+      slider.on("slideChange", syncCounter);
+      slider.on("slidesLengthChange", syncCounter);
+    }
   });
 };
 
