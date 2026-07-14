@@ -35,7 +35,7 @@ const checks = [
   ],
   [
     "Block11 keeps default cards variant",
-    /<Block11\s+\{\.\.\.blockProps\[10\]\}\s*\/>/.test(page) &&
+    /<Block11\s+\{\.\.\.blockProps\[7\]\}\s*\/>/.test(page) &&
       !/<Block11[^>]*variant=/.test(page),
   ],
   [

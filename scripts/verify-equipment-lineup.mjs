@@ -47,7 +47,7 @@ async function verifyStructure() {
   check(component.includes('<ul class="card-grid__lineup">'), "equipment lineup must use a UL");
   check(component.includes("card-grid__lineup-number"), "catalogue numbers are missing");
   check(/<Block5\s+\{\.\.\.blockProps\[4\]\}\s+variant="equipment-lineup"\s*\/>/.test(page), "Block5 does not activate equipment-lineup");
-  check(/<Block7\s+\{\.\.\.blockProps\[6\]\}\s*\/>/.test(page) && !/<Block7[^>]*variant=/.test(page), "Block7 must keep the default variant");
+  check(!/<Block7\b/.test(page), "removed Block7 must not render");
   for (const asset of assets) check(page.includes(`/${asset.replace("public/", "")}`), `page data is missing ${asset}`);
   for (const alt of expectedAlts) check(page.includes(alt), `page data is missing alt text: ${alt}`);
 }
@@ -116,7 +116,6 @@ async function verifyLayout() {
 
   const desktop = await openPage(1440, 1000);
   const lineup = desktop.locator('[data-card-grid-variant="equipment-lineup"]');
-  const defaultGrid = desktop.locator('[data-card-grid-variant="cards"]');
   const items = lineup.locator(".card-grid__lineup-item");
 
   check((await lineup.locator("h2").count()) === 1, "Block5 must contain one H2");
@@ -126,8 +125,6 @@ async function verifyLayout() {
   check((await lineup.locator(".swiper").count()) === 0, "Block5 must not contain Swiper markup");
   check((await lineup.locator(".glightbox").count()) === 0, "Block5 must not contain lightbox links");
   check((await lineup.locator(".card-grid__nav, .swiper-pagination").count()) === 0, "Block5 must not contain slider controls");
-  check((await defaultGrid.locator(".card-grid__slider.swiper").count()) === 1, "Block7 lost its default Swiper container");
-  check((await defaultGrid.locator(".card-grid__nav").count()) === 1, "Block7 lost its slider navigation");
 
   const titles = await items.locator("h3").allTextContents();
   check(JSON.stringify(titles) === JSON.stringify(expectedTitles), "Block5 titles or order changed");
@@ -144,7 +141,6 @@ async function verifyLayout() {
   await waitForLineupImages(desktop);
   await checkLineupImagesLoaded(desktop, "desktop");
   await lineup.screenshot({ path: "artifacts/equipment-lineup-desktop.png" });
-  await defaultGrid.screenshot({ path: "artifacts/materials-card-grid-block7-desktop.png" });
   await desktop.close();
 
   const tablet = await openPage(768, 1000);
