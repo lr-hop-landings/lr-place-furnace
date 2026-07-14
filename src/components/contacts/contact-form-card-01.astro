@@ -57,33 +57,314 @@ const { headline, subline, cta } = Astro.props;
 </section>
 
 <style>
-  .contact-card { padding: var(--spacing-section) var(--space-4); color: #fff; background: var(--color-primary-dark); }
-  .contact-card__inner { width: min(100%, var(--container-width)); margin: 0 auto; }
-  .contact-card__panel { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(28px, 6vw, 80px); padding: clamp(24px, 5vw, 64px); border: 1px solid rgb(255 255 255 / 14%); border-radius: 28px; background: linear-gradient(145deg, rgb(255 255 255 / 8%), rgb(255 255 255 / 2%)); }
-  .contact-card__copy { align-self: start; }
-  .contact-card__eyebrow { margin: 0 0 14px; color: #ffbb91; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
-  .contact-card h2 { margin: 0; font-family: var(--font-heading); font-size: var(--text-3xl); line-height: var(--leading-tight); }
-  .contact-card__copy > p:not(.contact-card__eyebrow) { color: rgb(255 255 255 / 72%); font-size: var(--text-lg); line-height: 1.65; }
-  .contact-card__phones { display: grid; gap: 8px; margin-top: 30px; }
-  .contact-card__phones a { color: #fff; font-family: var(--font-heading); font-size: clamp(20px, 2.2vw, 30px); font-weight: 800; text-decoration: none; }
-  .contact-card__socials { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-  .contact-card__socials a { padding: 9px 13px; border: 1px solid rgb(255 255 255 / 25%); border-radius: 999px; color: #fff; text-decoration: none; font-weight: 800; }
-  .contact-card__form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: clamp(20px, 3vw, 34px); border-radius: 22px; color: var(--color-text); background: #fff; }
-  .contact-card__form > label { display: grid; gap: 7px; font-size: 14px; font-weight: 700; }
-  .contact-card input:not([type="radio"]):not([type="checkbox"]) { width: 100%; min-height: 52px; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: 12px; color: var(--color-text); background: #fff; }
-  .contact-card__consent { grid-column: 1 / -1; grid-template-columns: 22px 1fr !important; align-items: start; font-weight: 500 !important; line-height: 1.45; }
-  .contact-card__submit { grid-column: 1 / -1; min-height: 56px; border: 0; border-radius: var(--radius-button); color: #fff; background: var(--color-accent); cursor: pointer; font-weight: 800; }
-  .contact-card__microcopy, .contact-card__status { grid-column: 1 / -1; margin: 0; color: var(--color-text-muted); font-size: 12px; line-height: 1.5; }
-  .contact-card__status { padding: 12px; border-radius: 10px; color: var(--color-text); background: var(--color-accent-light); }
-  .contact-card__dialpad { display: none; }
-  [data-lead-success] { grid-column: 1 / -1; padding: 16px; border-radius: 12px; color: var(--color-text); background: var(--color-accent-light); }
+  .contact-card {
+    padding: 88px var(--space-4, 16px);
+    color: #ffffff;
+    background: var(--color-primary-dark, #0b1f33);
+  }
+
+  .contact-card__inner {
+    width: min(100%, var(--container-width, 1200px));
+    margin: 0 auto;
+  }
+
+  .contact-card__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(420px, 520px);
+    gap: clamp(48px, 5vw, 64px);
+    align-items: center;
+    padding: 56px;
+    border: 1px solid rgb(255 255 255 / 14%);
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 18% 18%, rgb(255 255 255 / 7%), transparent 26rem),
+      rgb(255 255 255 / 4%);
+  }
+
+  .contact-card__copy {
+    max-width: 560px;
+  }
+
+  .contact-card__eyebrow {
+    margin: 0 0 16px;
+    color: #ffbb91;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .contact-card h2 {
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    font-size: clamp(42px, 5vw, 58px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+  }
+
+  .contact-card__copy > p:not(.contact-card__eyebrow) {
+    max-width: 520px;
+    margin: 24px 0 0;
+    color: rgb(255 255 255 / 74%);
+    font-size: var(--text-lg, 18px);
+    line-height: 1.65;
+  }
+
+  .contact-card__phones {
+    display: grid;
+    gap: 8px;
+    margin-top: 32px;
+  }
+
+  .contact-card__phones a {
+    width: fit-content;
+    color: #ffffff;
+    font-family: var(--font-heading, sans-serif);
+    font-size: clamp(22px, 2.4vw, 31px);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .contact-card__phones a:hover {
+    color: #ffbb91;
+  }
+
+  .contact-card__socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 26px;
+  }
+
+  .contact-card__socials a {
+    padding: 10px 14px;
+    border: 1px solid rgb(255 255 255 / 28%);
+    border-radius: 999px;
+    color: #ffffff;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .contact-card__socials a:hover {
+    border-color: #ffbb91;
+    background: rgb(255 255 255 / 6%);
+  }
+
+  .contact-card__form {
+    display: grid;
+    width: 100%;
+    max-width: 520px;
+    justify-self: end;
+    gap: 20px;
+    padding: 36px;
+    border: 1px solid rgb(255 255 255 / 36%);
+    border-radius: 22px;
+    color: var(--color-text, #152028);
+    background: #ffffff;
+    box-shadow: 7px 7px 0 var(--color-accent, #e76525);
+  }
+
+  .contact-card__desktop-phone {
+    display: grid;
+    gap: 9px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .contact-card__desktop-phone input {
+    width: 100%;
+    min-height: 56px;
+    padding: 13px 15px;
+    border: 1px solid var(--color-border, #d6dee3);
+    border-radius: 12px;
+    color: var(--color-text, #152028);
+    background: #ffffff;
+  }
+
+  .contact-card__desktop-phone input:focus-visible {
+    border-color: var(--color-accent, #e76525);
+    outline: 3px solid rgb(231 101 37 / 24%);
+    outline-offset: 1px;
+  }
+
+  .contact-card__dialpad {
+    display: none;
+  }
+
+  .contact-card__consent {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .contact-card__consent input {
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 0;
+    accent-color: var(--color-accent, #e76525);
+  }
+
+  .contact-card__submit {
+    min-height: 58px;
+    border: 0;
+    border-radius: var(--radius-button, 12px);
+    color: #ffffff;
+    background: var(--color-accent, #e76525);
+    cursor: pointer;
+    font-weight: 800;
+    transition: background-color 180ms ease, transform 180ms ease;
+  }
+
+  .contact-card__submit:hover {
+    background: #cf541f;
+    transform: translateY(-2px);
+  }
+
+  .contact-card__microcopy,
+  .contact-card__status {
+    margin: 0;
+    color: var(--color-text-muted, #60717d);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .contact-card__status {
+    padding: 12px;
+    border-radius: 10px;
+    color: var(--color-text, #152028);
+    background: var(--color-accent-light, #ffefe5);
+  }
+
+  [data-lead-success] {
+    grid-column: 1 / -1;
+    padding: 20px;
+    border-radius: 14px;
+    color: var(--color-text, #152028);
+    background: var(--color-accent-light, #ffefe5);
+  }
 
   @media (max-width: 820px) {
-    .contact-card__panel, .contact-card__form { grid-template-columns: 1fr; }
-    .contact-card__desktop-phone { display: none !important; }
-    .contact-card__dialpad { display: grid; gap: 9px; padding: 14px; border: 1px solid var(--color-border); border-radius: 16px; }
-    .contact-card__dialpad output { display: grid; min-height: 54px; place-items: center; border-radius: 12px; background: var(--color-background); font-size: 24px; font-weight: 800; }
-    .contact-card__dialpad > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .contact-card__dialpad button { min-height: 52px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; font-weight: 800; }
+    .contact-card {
+      padding: 72px 16px;
+    }
+
+    .contact-card__panel {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      padding: 36px;
+    }
+
+    .contact-card__copy {
+      max-width: 620px;
+    }
+
+    .contact-card__form {
+      justify-self: start;
+    }
+
+    .contact-card__desktop-phone {
+      display: none;
+    }
+
+    .contact-card__dialpad {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--color-border, #d6dee3);
+      border-radius: 16px;
+    }
+
+    .contact-card__dialpad:focus {
+      outline: 3px solid var(--color-accent, #e76525);
+      outline-offset: 3px;
+    }
+
+    .contact-card__dialpad > span {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .contact-card__dialpad output {
+      display: grid;
+      min-height: 58px;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--color-background, #f6f4ef);
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .contact-card__dialpad > div {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .contact-card__dialpad button {
+      min-height: 52px;
+      border: 1px solid var(--color-border, #d6dee3);
+      border-radius: 12px;
+      background: #ffffff;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .contact-card__dialpad button:hover {
+      border-color: var(--color-accent, #e76525);
+      background: var(--color-accent-light, #ffefe5);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .contact-card {
+      padding: 64px 16px;
+    }
+
+    .contact-card__panel {
+      gap: 32px;
+      padding: 24px;
+      border-radius: 22px;
+    }
+
+    .contact-card h2 {
+      font-size: clamp(36px, 11vw, 46px);
+    }
+
+    .contact-card__copy > p:not(.contact-card__eyebrow) {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .contact-card__phones {
+      margin-top: 26px;
+    }
+
+    .contact-card__phones a {
+      font-size: 21px;
+    }
+
+    .contact-card__form {
+      gap: 18px;
+      padding: 20px;
+      border-radius: 18px;
+      box-shadow: 5px 5px 0 var(--color-accent, #e76525);
+    }
+
+    .contact-card__dialpad {
+      padding: 12px;
+    }
+
+    .contact-card__consent {
+      font-size: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-card__submit {
+      transition: none;
+    }
   }
 </style>

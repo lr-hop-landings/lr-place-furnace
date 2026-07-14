@@ -430,7 +430,7 @@ Replace the complete `<style>` block with:
   .contact-card__panel {
     display: grid;
     grid-template-columns: minmax(0, 0.95fr) minmax(420px, 520px);
-    gap: clamp(48px, 7vw, 92px);
+    gap: clamp(48px, 5vw, 64px);
     align-items: center;
     padding: 56px;
     border: 1px solid rgb(255 255 255 / 14%);
@@ -456,7 +456,7 @@ Replace the complete `<style>` block with:
   .contact-card h2 {
     margin: 0;
     font-family: var(--font-heading, sans-serif);
-    font-size: clamp(42px, 5vw, 64px);
+    font-size: clamp(42px, 5vw, 58px);
     line-height: 1.04;
     letter-spacing: -0.025em;
   }
