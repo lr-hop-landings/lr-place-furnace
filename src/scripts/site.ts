@@ -442,7 +442,8 @@ const initFinalForms = () => {
       if (!phoneValue?.value.match(/^\+7\d{10}$/) || !consent?.checked || !form.checkValidity()) {
         event.preventDefault();
         form.reportValidity();
-        (phoneInput || dialpad)?.focus();
+        const phoneControl = phoneInput && phoneInput.offsetParent !== null ? phoneInput : dialpad;
+        phoneControl?.focus();
       }
     });
   });
@@ -454,6 +455,7 @@ const initLocalFormFallback = () => {
     if (form.dataset.localFallback === "true") return;
     form.dataset.localFallback = "true";
     form.addEventListener("submit", (event) => {
+      if (event.defaultPrevented) return;
       event.preventDefault();
       const status = form.closest("[data-lead-root]")?.querySelector<HTMLElement>("[data-lead-status]");
       if (status) {
