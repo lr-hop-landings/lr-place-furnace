@@ -43,7 +43,7 @@ async function verifyStructure() {
   check(/<Block5\s+\{\.\.\.blockProps\[4\]\}\s+variant="equipment-lineup"\s*\/>/.test(page), "Block5 wiring changed");
   check(/<Block8\s+\{\.\.\.blockProps\[5\]\}\s*\/>/.test(page), "Block8 must consume blockProps[5]");
   check(/<Block10\s+\{\.\.\.blockProps\[6\]\}\s*\/>/.test(page), "Block10 must consume blockProps[6]");
-  check(/<Block11\s+\{\.\.\.blockProps\[7\]\}\s*\/>/.test(page), "Block11 must consume blockProps[7]");
+  check(/<Block11\s+\{\.\.\.blockProps\[7\]\}\s+variant="qr-strip"\s+showQr=\{false\}\s*\/>/.test(page), "Block11 must consume blockProps[7]");
   check(/<Block17\s+\{\.\.\.blockProps\[13\]\}\s*\/>/.test(page), "Block17 must consume blockProps[13]");
 
   check(!(await pathExists("src/components/comparison/comparison-method-table-02.astro")), "unused comparison component still exists");

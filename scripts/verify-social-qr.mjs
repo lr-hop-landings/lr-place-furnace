@@ -14,6 +14,14 @@ const checks = [
     component.includes('variant?: "cards" | "qr-strip"'),
   ],
   [
+    "typed optional QR visibility prop",
+    component.includes("showQr?: boolean"),
+  ],
+  [
+    "QR visibility defaults to enabled",
+    component.includes("showQr = true"),
+  ],
+  [
     "QR-strip section modifier",
     component.includes("social-links-cards--qr-strip"),
   ],
@@ -34,9 +42,12 @@ const checks = [
     /<Block2\s+\{\.\.\.blockProps\[1\]\}\s+variant="qr-strip"\s*\/>/.test(page),
   ],
   [
-    "Block11 keeps default cards variant",
-    /<Block11\s+\{\.\.\.blockProps\[7\]\}\s*\/>/.test(page) &&
-      !/<Block11[^>]*variant=/.test(page),
+    "Block11 reuses QR-strip with QR disabled",
+    /<Block11\s+\{\.\.\.blockProps\[7\]\}\s+variant="qr-strip"\s+showQr=\{false\}\s*\/>/.test(page),
+  ],
+  [
+    "QR markup respects visibility prop",
+    /\{showQr\s*&&\s*item\.qrSrc\s*&&\s*\(/.test(component),
   ],
   [
     "current QR assets remain in page data",

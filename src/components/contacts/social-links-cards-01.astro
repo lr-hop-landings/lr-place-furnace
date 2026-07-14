@@ -19,6 +19,7 @@ interface Props {
   subline?: string;
   items?: SocialItem[];
   variant?: "cards" | "qr-strip";
+  showQr?: boolean;
 }
 
 const {
@@ -66,6 +67,7 @@ const {
     },
   ],
   variant = "cards",
+  showQr = true,
 } = Astro.props;
 
 const channelIcons: Record<string, Pick<SocialItem, "iconPath" | "viewBox" | "fillRule" | "clipRule">> = {
@@ -127,7 +129,7 @@ const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
                   <span aria-hidden="true">{item.name.slice(0, 2)}</span>
                 )}
               </a>
-              {item.qrSrc && (
+              {showQr && item.qrSrc && (
                 <a
                   class="social-links-cards__strip-qr-link"
                   href={item.href}
@@ -168,12 +170,14 @@ const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
                 )}
                 <strong>Написать в {item.name}</strong>
               </a>
-              <details class="social-links-cards__qr-toggle">
-                <summary>{item.hint || "Показать QR"}</summary>
-                <span class="social-links-cards__qr">
-                  {item.qrSrc ? <img src={item.qrSrc} alt={item.qrAlt ?? `QR-код ${item.name}`} loading="lazy" /> : <i aria-label={`QR-код ${item.name}`} />}
-                </span>
-              </details>
+              {showQr && (
+                <details class="social-links-cards__qr-toggle">
+                  <summary>{item.hint || "Показать QR"}</summary>
+                  <span class="social-links-cards__qr">
+                    {item.qrSrc ? <img src={item.qrSrc} alt={item.qrAlt ?? `QR-код ${item.name}`} loading="lazy" /> : <i aria-label={`QR-код ${item.name}`} />}
+                  </span>
+                </details>
+              )}
               <span class="social-links-cards__meta">
                 <strong>{item.name}</strong>
                 {item.handle && <small>{item.handle}</small>}
