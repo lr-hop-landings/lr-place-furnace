@@ -47,8 +47,8 @@ async function verifyStructure() {
   check(/<Block8\s+\{\.\.\.blockProps\[5\]\}\s*\/>/.test(page), "Block8 must consume blockProps[5]");
   check(/<Block10\s+\{\.\.\.blockProps\[6\]\}\s*\/>/.test(page), "Block10 must consume blockProps[6]");
   check(/<Block11\s+\{\.\.\.blockProps\[7\]\}\s+variant="qr-strip"\s+showQr=\{false\}\s*\/>/.test(page), "Block11 must consume blockProps[7]");
-  check(/<Block13\s+\{\.\.\.blockProps\[8\]\}\s*\/>/.test(page), "Block13 must consume blockProps[8]");
-  check(/<Block17\s+\{\.\.\.blockProps\[12\]\}\s*\/>/.test(page), "Block17 must consume blockProps[12]");
+  check(/<Block14\s+\{\.\.\.blockProps\[8\]\}\s*\/>/.test(page), "Block14 must consume blockProps[8]");
+  check(/<Block17\s+\{\.\.\.blockProps\[11\]\}\s*\/>/.test(page), "Block17 must consume blockProps[11]");
 
   check(!(await pathExists("src/components/comparison/comparison-method-table-02.astro")), "unused comparison component still exists");
   check(!(await pathExists("src/components/pricing/pricing-service-table-02.astro")), "unused pricing component still exists");
@@ -90,8 +90,8 @@ async function verifyLayout() {
       check(await compatibility.evaluate((element) => element.nextElementSibling?.classList.contains("cases-emergency")), `${viewport.name}: Block10 must immediately follow Block8`);
       const photoSocial = page.locator(".social-links-cards").nth(1);
       check(
-        await photoSocial.evaluate((element) => element.nextElementSibling?.classList.contains("company-proof")),
-        `${viewport.name}: company proof must immediately follow the photo social strip`,
+        await photoSocial.evaluate((element) => element.nextElementSibling?.classList.contains("guarantee-certificate")),
+        `${viewport.name}: document card must immediately follow the photo social strip`,
       );
       check((await page.locator(".method-comparison").count()) === 0, `${viewport.name}: comparison block remains`);
       check((await page.locator('[data-card-grid-variant="cards"]').count()) === 0, `${viewport.name}: house card grid remains`);

@@ -9,8 +9,6 @@ interface Props {
   headline: string;
   subline?: string;
   items: GuaranteeItem[];
-  summaryTitle?: string;
-  summaryText?: string;
   authorName?: string;
   authorRole?: string;
   cta?: string;
@@ -22,8 +20,6 @@ const {
   headline,
   subline,
   items,
-  summaryTitle,
-  summaryText,
   authorName,
   authorRole,
   cta,
@@ -40,20 +36,19 @@ const {
     </div>
     <article class="guarantee-certificate__card">
       <div class="guarantee-certificate__seal" aria-hidden="true">LR</div>
-      <div class="guarantee-certificate__items">
-        {items.map((item) => (
-          <div>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </div>
+      <ol class="guarantee-certificate__items">
+        {items.map((item, index) => (
+          <li class="guarantee-certificate__item">
+            <span class="guarantee-certificate__marker" aria-hidden="true">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </div>
+          </li>
         ))}
-      </div>
-      {(summaryTitle || summaryText) && (
-        <div class="guarantee-certificate__summary">
-          {summaryTitle && <strong>{summaryTitle}</strong>}
-          {summaryText && <p>{summaryText}</p>}
-        </div>
-      )}
+      </ol>
       {(authorName || cta) && (
         <footer class="guarantee-certificate__footer">
           {authorName && (
@@ -147,22 +142,13 @@ const {
     font-size: var(--text-xl, 20px);
   }
 
-  .guarantee-certificate__items p,
-  .guarantee-certificate__summary p {
+  .guarantee-certificate__items p {
     margin: 8px 0 0;
     color: var(--color-text-muted, #000000);
     font-family: var(--font-body, sans-serif);
     line-height: var(--leading-relaxed, 1.65);
   }
 
-  .guarantee-certificate__summary {
-    margin-top: 28px;
-    padding: 22px;
-    border-radius: var(--radius-card, 8px);
-    background: var(--color-surface, #ffffff);
-  }
-
-  .guarantee-certificate__summary strong,
   .guarantee-certificate__footer strong {
     display: block;
     font-family: var(--font-heading, sans-serif);
@@ -196,6 +182,11 @@ const {
     font-family: var(--font-body, sans-serif);
     font-weight: var(--font-semibold, 600);
     text-decoration: none;
+  }
+
+  .guarantee-certificate__footer a:focus-visible {
+    outline: 3px solid var(--color-accent, #e85d2a);
+    outline-offset: 3px;
   }
 
   @media (max-width: 860px) {

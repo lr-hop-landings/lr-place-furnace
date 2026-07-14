@@ -8,7 +8,6 @@ import Block5 from "../components/features/materials-card-grid-01.astro";
 import Block8 from "../components/features/equipment-process-02.astro";
 import Block10 from "../components/cases/cases-emergency-slider-02.astro";
 import Block11 from "../components/contacts/social-links-cards-01.astro";
-import Block13 from "../components/trust-bar/trust-company-proof-02.astro";
 import Block14 from "../components/guarantees/guarantee-certificate-01.astro";
 import Block15 from "../components/reviews/reviews-gallery-cards-01.astro";
 import Block16 from "../components/faq/faq-accordion-01.astro";
@@ -279,28 +278,6 @@ const blockProps: any[] = [
                   ]
     },
     {
-        "eyebrow":  "Ответственность компании",
-        "headline":  "Понятный заказ — от первой сметы до запуска",
-        "description":  "До начала работ согласуются схема, материалы и стоимость. После монтажа проверяется работа системы и передаются документы.",
-        "proofs":  [
-                       {
-                           "title":  "Согласование",
-                           "text":  "Схема и состав работ до начала монтажа."
-                       },
-                       {
-                           "title":  "Контроль",
-                           "text":  "Проверка тяги и первый запуск."
-                       },
-                       {
-                           "title":  "Документы",
-                           "text":  "Договор, смета и акт по согласованному заказу."
-                       }
-                   ],
-        "ctaLabel":  "Получить расчёт",
-        "ctaHref":  "#estimate-quiz",
-        "phone":  "+7 (812) 344-44-44"
-    },
-    {
         "eyebrow":  "Фиксируем договорённости",
         "headline":  "Смета до начала работ, документы после монтажа",
         "subline":  "Объём работ, материалы, стоимость и условия должны быть понятны до начала монтажа.",
@@ -318,8 +295,6 @@ const blockProps: any[] = [
                           "text":  "Акт, согласованные гарантийные условия и инструктаж."
                       }
                   ],
-        "summaryTitle":  "Нужны реальные образцы",
-        "summaryText":  "Перед публикацией добавьте обезличенные документы без персональных данных.",
         "cta":  "Запросить пример сметы",
         "ctaHref":  "#estimate-quiz"
     },
@@ -424,10 +399,9 @@ const blockProps: any[] = [
     <Block8 {...blockProps[5]} />
     <Block10 {...blockProps[6]} />
     <Block11 {...blockProps[7]} variant="qr-strip" showQr={false} />
-    <Block13 {...blockProps[8]} />
-    <Block14 {...blockProps[9]} />
-    <Block15 {...blockProps[10]} />
-    <Block16 {...blockProps[11]} />
-    <Block17 {...blockProps[12]} />
+    <Block14 {...blockProps[8]} />
+    <Block15 {...blockProps[9]} />
+    <Block16 {...blockProps[10]} />
+    <Block17 {...blockProps[11]} />
   </main>
 </BaseLayout>
