@@ -35,20 +35,54 @@ const {
           {item.icon && (
             <div class="equipment-process__icon">
               {item.icon === "stove" && (
-                <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-                  <path d="M18 14h28v38H18z M23 22h18v18H23z M22 52l-3 6 M42 52l3 6 M26 9h12v5" />
-                  <circle cx="37" cy="45" r="1.5" />
+                <svg viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+                  <g class="equipment-process__icon-base">
+                    <path d="M25 20h24v35H25z" />
+                    <path d="M29 15h16v5M33 15v-4h8v4" />
+                    <rect x="29.5" y="26" width="15" height="17" rx="1.5" />
+                    <path d="M32 29h10M25 49h24M29 55l-3 6M45 55l3 6" />
+                  </g>
+                  <path
+                    class="equipment-process__icon-accent"
+                    d="M18 27v17M15.5 29.5 18 27l2.5 2.5M15.5 41.5 18 44l2.5-2.5"
+                  />
+                  <circle
+                    class="equipment-process__icon-accent equipment-process__icon-accent--fill"
+                    cx="42"
+                    cy="48"
+                    r="1.5"
+                  />
                 </svg>
               )}
               {item.icon === "structure" && (
-                <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-                  <path d="M10 30 32 12l22 18v24H10z M18 26v28 M46 26v28 M10 39h44 M24 54V38h16v16" />
+                <svg viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+                  <g class="equipment-process__icon-base">
+                    <path d="M11 33 36 13l25 20v27H11z" />
+                    <path d="M18 27v33M54 27v33M11 43h50" />
+                    <path d="M24 60V43h24v17M30 43v17M42 43v17M18 52h6M48 52h6" />
+                  </g>
+                  <circle
+                    class="equipment-process__icon-accent equipment-process__icon-accent--fill"
+                    cx="36"
+                    cy="13"
+                    r="2"
+                  />
                 </svg>
               )}
               {item.icon === "route" && (
-                <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-                  <path d="M12 50h15V30h13V13h12 M46 8l6 5-6 5 M19 24l8 6-8 6" />
-                  <circle cx="12" cy="50" r="3" />
+                <svg viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+                  <g class="equipment-process__icon-base">
+                    <circle cx="14" cy="57" r="3" />
+                    <path d="M17 57h14V43h13V27h13V13" />
+                    <path d="m52 18 5-5-5-5M27 38l4 5-4 5" />
+                  </g>
+                  <path class="equipment-process__icon-accent" d="M22 57v-5M38 43v-5M51 27v-5" />
+                  <circle
+                    class="equipment-process__icon-accent equipment-process__icon-accent--fill"
+                    cx="31"
+                    cy="43"
+                    r="2"
+                  />
                 </svg>
               )}
             </div>
@@ -173,11 +207,28 @@ const {
   .equipment-process__icon svg {
     width: 64px;
     height: 64px;
+    overflow: visible;
+  }
+
+  .equipment-process__icon :global(.equipment-process__icon-base),
+  .equipment-process__icon :global(.equipment-process__icon-accent) {
     fill: none;
-    stroke: currentColor;
-    stroke-width: 1.7;
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+
+  .equipment-process__icon :global(.equipment-process__icon-base) {
+    stroke: currentColor;
+    stroke-width: 1.8;
+  }
+
+  .equipment-process__icon :global(.equipment-process__icon-accent) {
+    stroke: var(--color-accent, #e76525);
+    stroke-width: 1.8;
+  }
+
+  .equipment-process__icon :global(.equipment-process__icon-accent--fill) {
+    fill: var(--color-accent, #e76525);
   }
 
   .equipment-process__copy {
