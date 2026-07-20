@@ -31,11 +31,17 @@ const formatIndex = (index: number) => String(index + 1).padStart(2, "0");
 const total = String(items.length).padStart(2, "0");
 ---
 
-<section class="cases-emergency" data-real-case-slider aria-labelledby="case-slider-title">
+<section
+  class="cases-emergency"
+  data-real-case-slider
+  aria-labelledby="case-slider-title"
+>
   <div class="cases-emergency__inner">
     <header class="cases-emergency__header">
       {eyebrow && <p class="cases-emergency__eyebrow">{eyebrow}</p>}
-      <h2 id="case-slider-title">{headline}{" "}{accent && <span>{accent}</span>}</h2>
+      <h2 id="case-slider-title">
+        {headline}{" "}{accent && <span>{accent}</span>}
+      </h2>
       {subline && <p class="cases-emergency__subline">{subline}</p>}
     </header>
 
@@ -45,65 +51,104 @@ const total = String(items.length).padStart(2, "0");
       data-swiper-options='{"slidesPerView":"auto","spaceBetween":24,"keyboard":{"enabled":true,"onlyInViewport":true}}'
     >
       <div class="swiper-wrapper">
-        {items.map((item, index) => (
-          <article
-            class="cases-emergency__card swiper-slide"
-            data-case-state={item.imageSrc ? "published" : "draft"}
-          >
-            <div class="cases-emergency__image">
-              {item.imageSrc ? (
-                <img src={item.imageSrc} alt={item.imageAlt ?? item.title} loading="lazy" />
-              ) : (
-                <div class="cases-emergency__placeholder">
-                  <svg class="cases-emergency__placeholder-icon" viewBox="0 0 64 48" aria-hidden="true" focusable="false">
-                    <rect x="3" y="3" width="58" height="42" rx="6" fill="none" stroke="currentColor" stroke-width="2" />
-                    <circle cx="46" cy="16" r="5" fill="none" stroke="currentColor" stroke-width="2" />
-                    <path d="m9 38 14-14 9 9 7-7 16 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        {
+          items.map((item, index) => (
+            <article
+              class="cases-emergency__card swiper-slide"
+              data-case-state={item.imageSrc ? "published" : "draft"}
+            >
+              <div class="cases-emergency__image">
+                {item.imageSrc ? (
+                  <img
+                    src={item.imageSrc}
+                    alt={item.imageAlt ?? item.title}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="cases-emergency__placeholder">
+                    <svg
+                      class="cases-emergency__placeholder-icon"
+                      viewBox="0 0 64 48"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <rect
+                        x="3"
+                        y="3"
+                        width="58"
+                        height="42"
+                        rx="6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                      <circle
+                        cx="46"
+                        cy="16"
+                        r="5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                      <path
+                        d="m9 38 14-14 9 9 7-7 16 12"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <span>Фото объекта будет добавлено</span>
+                  </div>
+                )}
+              </div>
+
+              <div class="cases-emergency__content">
+                <div class="cases-emergency__topline">
+                  <span class="cases-emergency__index">
+                    Кейс {formatIndex(index)}
+                  </span>
+                  <div class="cases-emergency__meta">
+                    {item.objectType && <span>{item.objectType}</span>}
+                    {item.location && <span>{item.location}</span>}
+                  </div>
+                </div>
+                <h3>{item.title}</h3>
+                <div class="cases-emergency__task">
+                  <span>Задача</span>
+                  <p>{item.task}</p>
+                </div>
+                {item.works.length > 0 ? (
+                  <div class="cases-emergency__works">
+                    <span>Выполнили</span>
+                    <ul>
+                      {item.works.map((work) => (
+                        <li>{work}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <p class="cases-emergency__draft-status">
+                    {item.status ?? "Карточка кейса готовится"}
+                  </p>
+                )}
+                {item.result && (
+                  <p class="cases-emergency__result">
+                    <span>Результат</span>
+                    {item.result}
+                  </p>
+                )}
+                <a class="cases-emergency__cta" href="#estimate-quiz">
+                  Рассчитать стоимость
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m10 6 6 6-6 6" />
                   </svg>
-                  <span>Фото объекта будет добавлено</span>
-                </div>
-              )}
-            </div>
-
-            <div class="cases-emergency__content">
-              <div class="cases-emergency__topline">
-                <span class="cases-emergency__index">Кейс {formatIndex(index)}</span>
-                <div class="cases-emergency__meta">
-                  {item.objectType && <span>{item.objectType}</span>}
-                  {item.location && <span>{item.location}</span>}
-                </div>
+                </a>
               </div>
-              <h3>{item.title}</h3>
-              <div class="cases-emergency__task">
-                <span>Задача</span>
-                <p>{item.task}</p>
-              </div>
-              {item.works.length > 0 ? (
-                <div class="cases-emergency__works">
-                  <span>Выполнили</span>
-                  <ul>{item.works.map((work) => <li>{work}</li>)}</ul>
-                </div>
-              ) : (
-                <p class="cases-emergency__draft-status">{item.status ?? "Карточка кейса готовится"}</p>
-              )}
-              {item.result && <p class="cases-emergency__result"><span>Результат</span>{item.result}</p>}
-            </div>
-          </article>
-        ))}
-      </div>
-
-      <div class="cases-emergency__controls">
-        <p class="cases-emergency__counter" aria-live="polite" aria-atomic="true">
-          <span data-swiper-current>01</span><span aria-hidden="true"> / </span><span data-swiper-total>{total}</span>
-        </p>
-        <div class="cases-emergency__arrows">
-          <button class="swiper-button-prev" type="button" aria-label="Предыдущий кейс">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h9" /></svg>
-          </button>
-          <button class="swiper-button-next" type="button" aria-label="Следующий кейс">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6m6-6H7" /></svg>
-          </button>
-        </div>
+            </article>
+          ))
+        }
       </div>
     </div>
   </div>
@@ -116,7 +161,11 @@ const total = String(items.length).padStart(2, "0");
     padding: var(--spacing-section, 96px) var(--space-4, 16px);
     color: var(--color-white, #ffffff);
     background:
-      radial-gradient(circle at 88% 10%, rgb(231 101 37 / 14%), transparent 27rem),
+      radial-gradient(
+        circle at 88% 10%,
+        rgb(231 101 37 / 14%),
+        transparent 27rem
+      ),
       var(--color-primary-dark, #0b1f33);
   }
 
@@ -126,7 +175,10 @@ const total = String(items.length).padStart(2, "0");
     pointer-events: none;
     content: "";
     opacity: 0.16;
-    background-image: radial-gradient(rgb(255 255 255 / 35%) 0.7px, transparent 0.7px);
+    background-image: radial-gradient(
+      rgb(255 255 255 / 35%) 0.7px,
+      transparent 0.7px
+    );
     background-size: 18px 18px;
     -webkit-mask-image: linear-gradient(to bottom, #000, transparent 72%);
     mask-image: linear-gradient(to bottom, #000, transparent 72%);
@@ -194,31 +246,43 @@ const total = String(items.length).padStart(2, "0");
     align-items: stretch;
   }
 
-  .cases-emergency__card {
-    display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(310px, 0.85fr);
-    width: min(900px, calc(100vw - 220px));
-    min-height: 520px;
+  .cases-emergency__card.swiper-slide {
     height: auto;
+  }
+
+  .cases-emergency__card {
+    display: flex;
+    flex-direction: column;
+    width: min(420px, calc(100vw - 100px));
     overflow: hidden;
     border: 1px solid rgb(255 255 255 / 16%);
-    border-radius: clamp(1.25rem, 2vw, 2rem);
+    border-radius: clamp(1rem, 2vw, 1.25rem);
     color: var(--color-text, #152028);
     background: var(--color-surface, #fff);
-    box-shadow: 0 28px 70px rgb(0 0 0 / 24%);
+    box-shadow: 0 20px 50px rgb(0 0 0 / 22%);
+    transition:
+      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (hover: hover) {
+    .cases-emergency__card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 64px rgb(0 0 0 / 32%);
+    }
   }
 
   .cases-emergency__image {
     min-width: 0;
-    min-height: 100%;
+    aspect-ratio: 3 / 2;
     background: #e9e5dc;
+    overflow: hidden;
   }
 
   .cases-emergency__image img,
   .cases-emergency__placeholder {
     width: 100%;
     height: 100%;
-    min-height: 100%;
   }
 
   .cases-emergency__image img {
@@ -236,7 +300,11 @@ const total = String(items.length).padStart(2, "0");
     text-align: center;
     background:
       linear-gradient(145deg, rgb(18 58 90 / 9%), rgb(231 101 37 / 13%)),
-      repeating-linear-gradient(135deg, transparent 0 26px, rgb(11 31 51 / 3%) 26px 27px),
+      repeating-linear-gradient(
+        135deg,
+        transparent 0 26px,
+        rgb(11 31 51 / 3%) 26px 27px
+      ),
       #e9e5dc;
   }
 
@@ -256,15 +324,57 @@ const total = String(items.length).padStart(2, "0");
     display: flex;
     min-width: 0;
     flex-direction: column;
-    padding: clamp(1.5rem, 3vw, 2.5rem);
+    flex: 1;
+    padding: clamp(1.1rem, 2.5vw, 1.5rem);
+  }
+
+  .cases-emergency__content > :nth-last-child(2) {
+    margin-bottom: 1.25rem;
+  }
+
+  .cases-emergency__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding: 0.75rem 1.25rem;
+    border: 0;
+    border-radius: var(--radius-button, 12px);
+    color: #ffffff;
+    background: var(--color-accent, #e76525);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .cases-emergency__cta:hover {
+    background: #d45a1e;
+    transform: translateY(-1px);
+  }
+
+  .cases-emergency__cta svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .cases-emergency__topline {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: auto;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .cases-emergency__index {
@@ -295,20 +405,20 @@ const total = String(items.length).padStart(2, "0");
   }
 
   .cases-emergency h3 {
-    margin: clamp(2.2rem, 6vw, 4.5rem) 0 1.4rem;
+    margin: 0 0 0.75rem;
     color: var(--color-primary-dark, #0b1f33);
     font-family: var(--font-heading, sans-serif);
-    font-size: clamp(1.75rem, 3vw, 2.4rem);
-    line-height: 1.02;
-    letter-spacing: -0.035em;
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
   }
 
   .cases-emergency__task,
   .cases-emergency__works {
     display: grid;
-    grid-template-columns: 5.25rem minmax(0, 1fr);
-    gap: 1rem;
-    padding-top: 1rem;
+    grid-template-columns: 6.25rem minmax(0, 1fr);
+    gap: 0.5rem;
+    padding-top: 0.65rem;
     border-top: 1px solid var(--color-border, #d6dee3);
   }
 
@@ -316,10 +426,11 @@ const total = String(items.length).padStart(2, "0");
   .cases-emergency__works > span,
   .cases-emergency__result > span {
     color: var(--color-text-muted, #60717d);
-    font-size: 0.6875rem;
+    font-size: 0.625rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    padding-top: 0.15rem;
   }
 
   .cases-emergency__task p,
@@ -332,15 +443,21 @@ const total = String(items.length).padStart(2, "0");
   .cases-emergency__task p,
   .cases-emergency__works li {
     color: var(--color-text, #152028);
-    line-height: 1.55;
+    font-size: 0.875rem;
+    line-height: 1.45;
   }
 
   .cases-emergency__works {
-    margin-top: 1rem;
+    margin-top: 0.65rem;
   }
 
   .cases-emergency__works ul {
-    padding-left: 1.1rem;
+    padding-left: 1rem;
+    margin: 0;
+  }
+
+  .cases-emergency__works li {
+    margin-bottom: 0.1rem;
   }
 
   .cases-emergency__draft-status {
@@ -355,102 +472,27 @@ const total = String(items.length).padStart(2, "0");
 
   .cases-emergency__result {
     display: grid;
-    grid-template-columns: 5.25rem minmax(0, 1fr);
-    gap: 1rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
+    grid-template-columns: 6.25rem minmax(0, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.65rem;
+    padding-top: 0.65rem;
     border-top: 1px solid var(--color-border, #d6dee3);
     color: var(--color-primary, #123a5a);
-    font-weight: 800;
-    line-height: 1.5;
-  }
-
-  .cases-emergency__controls {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 1.5rem;
-  }
-
-  .cases-emergency__counter {
-    display: flex;
-    align-items: baseline;
-    gap: 0.45rem;
-    margin: 0;
-    color: rgb(255 255 255 / 42%);
     font-size: 0.875rem;
     font-weight: 800;
-    letter-spacing: 0.08em;
-  }
-
-  .cases-emergency__counter [data-swiper-current] {
-    color: var(--color-white, #fff);
-    font-size: 1.5rem;
-  }
-
-  .cases-emergency__arrows {
-    display: flex;
-    gap: 0.75rem;
-  }
-
-  .cases-emergency .swiper-button-prev,
-  .cases-emergency .swiper-button-next {
-    position: static;
-    display: grid;
-    width: 3rem;
-    height: 3rem;
-    margin: 0;
-    place-items: center;
-    border: 1px solid rgb(255 255 255 / 34%);
-    border-radius: 50%;
-    color: var(--color-white, #fff);
-    background: transparent;
-    transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
-  }
-
-  .cases-emergency .swiper-button-prev::after,
-  .cases-emergency .swiper-button-next::after {
-    display: none;
-  }
-
-  .cases-emergency .swiper-button-prev svg,
-  .cases-emergency .swiper-button-next svg {
-    width: 1.35rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .cases-emergency .swiper-button-prev:hover,
-  .cases-emergency .swiper-button-next:hover {
-    border-color: var(--color-accent, #e76525);
-    color: var(--color-white, #fff);
-    background: var(--color-accent, #e76525);
-    transform: translateY(-2px);
-  }
-
-  .cases-emergency .swiper-button-disabled {
-    opacity: 0.32;
+    line-height: 1.4;
   }
 
   @media (max-width: 899px) {
     .cases-emergency__card {
-      grid-template-columns: minmax(0, 1.18fr) minmax(260px, 0.82fr);
-      width: calc(100% - 80px);
-      min-height: 480px;
-    }
-
-    .cases-emergency h3 {
-      margin-top: 2.5rem;
+      width: min(380px, calc(100vw - 80px));
     }
 
     .cases-emergency__task,
     .cases-emergency__works,
     .cases-emergency__result {
       grid-template-columns: 1fr;
-      gap: 0.4rem;
+      gap: 0.25rem;
     }
   }
 
@@ -469,49 +511,15 @@ const total = String(items.length).padStart(2, "0");
     }
 
     .cases-emergency__card {
-      grid-template-columns: 1fr;
       width: calc(100% - 28px);
-      min-height: 0;
-    }
-
-    .cases-emergency__image {
-      min-height: 0;
-      aspect-ratio: 4 / 3;
     }
 
     .cases-emergency__content {
-      padding: 1.25rem;
-    }
-
-    .cases-emergency__topline {
-      flex-direction: column;
-      margin-bottom: 0;
-    }
-
-    .cases-emergency__meta {
-      justify-content: flex-start;
+      padding: 1rem;
     }
 
     .cases-emergency h3 {
-      margin: 1.75rem 0 1rem;
-      font-size: clamp(1.65rem, 8vw, 2.2rem);
-    }
-
-    .cases-emergency__controls {
-      margin-top: 1.25rem;
-    }
-
-    .cases-emergency .swiper-button-prev,
-    .cases-emergency .swiper-button-next {
-      width: 2.75rem;
-      height: 2.75rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .cases-emergency .swiper-button-prev,
-    .cases-emergency .swiper-button-next {
-      transition: none;
+      font-size: clamp(1.15rem, 6vw, 1.35rem);
     }
   }
 </style>

@@ -56,7 +56,8 @@ const {
       handle: "max.ru",
       hint: "Наведите камеру",
       color: "#C63DEB",
-      gradient: "linear-gradient(135deg, #5b51d8, #7c4dff 20%, #8b5cf6 50%, #a855f7 70%, #d946ef)",
+      gradient:
+        "linear-gradient(135deg, #5b51d8, #7c4dff 20%, #8b5cf6 50%, #a855f7 70%, #d946ef)",
       qrSrc: "/images/lr-qr-max-white.png",
       qrAlt: "QR-код Max",
       viewBox: "0 0 24 24",
@@ -70,7 +71,10 @@ const {
   showQr = true,
 } = Astro.props;
 
-const channelIcons: Record<string, Pick<SocialItem, "iconPath" | "viewBox" | "fillRule" | "clipRule">> = {
+const channelIcons: Record<
+  string,
+  Pick<SocialItem, "iconPath" | "viewBox" | "fillRule" | "clipRule">
+> = {
   telegram: {
     viewBox: "0 0 24 20",
     iconPath:
@@ -94,99 +98,142 @@ const stripItems = items.map((item) => ({
   ...channelIcons[item.name.toLocaleLowerCase("ru-RU")],
   ...item,
 }));
-const accentWord = "соцсетях";
+const accentWord = "мессенджере";
 const accentStart = title.toLocaleLowerCase("ru-RU").lastIndexOf(accentWord);
-const titleBeforeAccent = accentStart >= 0 ? title.slice(0, accentStart) : title;
+const titleBeforeAccent =
+  accentStart >= 0 ? title.slice(0, accentStart) : title;
 const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
 ---
 
-<section class:list={["social-links-cards", { "social-links-cards--qr-strip": variant === "qr-strip" }]}>
+<section
+  class:list={[
+    "social-links-cards",
+    { "social-links-cards--qr-strip": variant === "qr-strip" },
+  ]}
+>
   <div class="social-links-cards__inner">
-    {variant === "qr-strip" ? (
-      <>
-        <header class="social-links-cards__strip-header">
-          <h2 class="social-links-cards__strip-title">
-            {titleBeforeAccent}{titleAccent && <em>{titleAccent}</em>}
-          </h2>
-          {subline && <p>{subline}</p>}
-        </header>
-        <div class="social-links-cards__strip-grid">
-          {stripItems.map((item) => (
-            <article class="social-links-cards__strip-card">
-              <a
-                class="social-links-cards__strip-button"
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Открыть ${item.name}`}
-                style={`background: ${item.gradient || item.color || "#000000"}`}
-              >
-                {item.iconPath ? (
-                  <svg viewBox={item.viewBox ?? "0 0 24 24"} width="28" height="28" fill="currentColor" aria-hidden="true">
-                    <path d={item.iconPath} fill-rule={item.fillRule} clip-rule={item.clipRule} />
-                  </svg>
-                ) : (
-                  <span aria-hidden="true">{item.name.slice(0, 2)}</span>
-                )}
-              </a>
-              {showQr && item.qrSrc && (
+    {
+      variant === "qr-strip" ? (
+        <>
+          <header class="social-links-cards__strip-header">
+            <h2 class="social-links-cards__strip-title">
+              {titleBeforeAccent}
+              {titleAccent && <em>{titleAccent}</em>}
+            </h2>
+            {/* {subline && <p>{subline}</p>} */}
+          </header>
+          <div class="social-links-cards__strip-grid">
+            {stripItems.map((item) => (
+              <article class="social-links-cards__strip-card">
                 <a
-                  class="social-links-cards__strip-qr-link"
+                  class="social-links-cards__strip-button"
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`Открыть ${item.name} по QR-коду`}
+                  aria-label={`Открыть ${item.name}`}
+                  style={`background: ${item.gradient || item.color || "#000000"}`}
                 >
-                  <img
-                    src={item.qrSrc}
-                    alt={item.qrAlt ?? `QR-код ${item.name}`}
-                    width="256"
-                    height="256"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  {item.iconPath ? (
+                    <svg
+                      viewBox={item.viewBox ?? "0 0 24 24"}
+                      width="28"
+                      height="28"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d={item.iconPath}
+                        fill-rule={item.fillRule}
+                        clip-rule={item.clipRule}
+                      />
+                    </svg>
+                  ) : (
+                    <span aria-hidden="true">{item.name.slice(0, 2)}</span>
+                  )}
                 </a>
-              )}
-            </article>
-          ))}
-        </div>
-      </>
-    ) : (
-      <>
-        <header>
-          <h2>{title}</h2>
-          {subline && <p>{subline}</p>}
-        </header>
-        <div class="social-links-cards__grid">
-          {items.map((item) => (
-            <article class="social-links-cards__card">
-              <a class="social-links-cards__button" href={item.href} target="_blank" rel="noopener noreferrer" style={`background: ${item.gradient || item.color || "#000000"}`}>
-                {item.iconPath ? (
-                  <svg viewBox={item.viewBox ?? "0 0 24 24"} width="24" height="24" fill="currentColor" aria-hidden="true">
-                    <path d={item.iconPath} fill-rule={item.fillRule} clip-rule={item.clipRule} />
-                  </svg>
-                ) : (
-                  <span>{item.name.slice(0, 2)}</span>
+                {showQr && item.qrSrc && (
+                  <a
+                    class="social-links-cards__strip-qr-link"
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Открыть ${item.name} по QR-коду`}
+                  >
+                    <img
+                      src={item.qrSrc}
+                      alt={item.qrAlt ?? `QR-код ${item.name}`}
+                      width="256"
+                      height="256"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </a>
                 )}
-                <strong>Написать в {item.name}</strong>
-              </a>
-              {showQr && (
-                <details class="social-links-cards__qr-toggle">
-                  <summary>{item.hint || "Показать QR"}</summary>
-                  <span class="social-links-cards__qr">
-                    {item.qrSrc ? <img src={item.qrSrc} alt={item.qrAlt ?? `QR-код ${item.name}`} loading="lazy" /> : <i aria-label={`QR-код ${item.name}`} />}
-                  </span>
-                </details>
-              )}
-              <span class="social-links-cards__meta">
-                <strong>{item.name}</strong>
-                {item.handle && <small>{item.handle}</small>}
-              </span>
-            </article>
-          ))}
-        </div>
-      </>
-    )}
+              </article>
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          <header>
+            <h2>{title}</h2>
+            {subline && <p>{subline}</p>}
+          </header>
+          <div class="social-links-cards__grid">
+            {items.map((item) => (
+              <article class="social-links-cards__card">
+                <a
+                  class="social-links-cards__button"
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={`background: ${item.gradient || item.color || "#000000"}`}
+                >
+                  {item.iconPath ? (
+                    <svg
+                      viewBox={item.viewBox ?? "0 0 24 24"}
+                      width="24"
+                      height="24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d={item.iconPath}
+                        fill-rule={item.fillRule}
+                        clip-rule={item.clipRule}
+                      />
+                    </svg>
+                  ) : (
+                    <span>{item.name.slice(0, 2)}</span>
+                  )}
+                  <strong>Написать в {item.name}</strong>
+                </a>
+                {showQr && (
+                  <details class="social-links-cards__qr-toggle">
+                    <summary>{item.hint || "Показать QR"}</summary>
+                    <span class="social-links-cards__qr">
+                      {item.qrSrc ? (
+                        <img
+                          src={item.qrSrc}
+                          alt={item.qrAlt ?? `QR-код ${item.name}`}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <i aria-label={`QR-код ${item.name}`} />
+                      )}
+                    </span>
+                  </details>
+                )}
+                <span class="social-links-cards__meta">
+                  <strong>{item.name}</strong>
+                  {item.handle && <small>{item.handle}</small>}
+                </span>
+              </article>
+            ))}
+          </div>
+        </>
+      )
+    }
   </div>
 </section>
 
@@ -251,7 +298,9 @@ const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
     text-decoration: none;
   }
 
-  .social-links-cards__button strong { font-size: var(--text-base, 16px); }
+  .social-links-cards__button strong {
+    font-size: var(--text-base, 16px);
+  }
 
   .social-links-cards__button svg {
     width: 26px;
@@ -285,12 +334,18 @@ const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
     list-style: none;
   }
 
-  .social-links-cards__qr-toggle summary::-webkit-details-marker { display: none; }
+  .social-links-cards__qr-toggle summary::-webkit-details-marker {
+    display: none;
+  }
 
-  .social-links-cards__qr-toggle:not([open]) .social-links-cards__qr { display: none; }
+  .social-links-cards__qr-toggle:not([open]) .social-links-cards__qr {
+    display: none;
+  }
 
   @media (min-width: 781px) {
-    .social-links-cards__qr-toggle summary { display: none; }
+    .social-links-cards__qr-toggle summary {
+      display: none;
+    }
   }
 
   .social-links-cards__qr img {
@@ -337,7 +392,7 @@ const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
   }
 
   .social-links-cards--qr-strip {
-    padding: clamp(64px, 7vw, 88px) var(--space-4, 16px) clamp(72px, 8vw, 104px);
+    padding: clamp(24px, 3vw, 32px) var(--space-4, 16px) clamp(64px, 8vw, 92px);
     background: var(--color-background, #f6f4ef);
   }
 
@@ -395,7 +450,9 @@ const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
     color: #ffffff;
     text-decoration: none;
     box-shadow: 0 8px 20px rgb(21 32 40 / 8%);
-    transition: transform 160ms ease, box-shadow 160ms ease;
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease;
   }
 
   .social-links-cards__strip-button svg {
@@ -415,11 +472,15 @@ const titleAccent = accentStart >= 0 ? title.slice(accentStart) : "";
     margin-top: 16px;
     padding: 18px;
     overflow: hidden;
-    border: 1px solid color-mix(in srgb, var(--color-border, #d6dee3) 80%, #ffffff);
+    border: 1px solid
+      color-mix(in srgb, var(--color-border, #d6dee3) 80%, #ffffff);
     border-radius: 10px;
     background: var(--color-surface, #ffffff);
     box-shadow: 0 14px 36px rgb(21 32 40 / 7%);
-    transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
   }
 
   .social-links-cards__strip-qr-link img {

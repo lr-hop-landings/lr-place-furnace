@@ -176,6 +176,14 @@ const {
     border-radius: 18px;
     background: var(--color-surface, #ffffff);
     box-shadow: 0 14px 34px rgb(11 31 51 / 7%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (hover: hover) {
+    .equipment-process__item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgb(11 31 51 / 12%);
+    }
   }
 
   .equipment-process__marker {
@@ -208,6 +216,13 @@ const {
     width: 64px;
     height: 64px;
     overflow: visible;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (hover: hover) {
+    .equipment-process__item:hover .equipment-process__icon svg {
+      transform: scale(1.08);
+    }
   }
 
   .equipment-process__icon :global(.equipment-process__icon-base),

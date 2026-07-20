@@ -39,11 +39,19 @@ const callouts = [
 <section
   class="hero-visual"
   data-hero-enhanced
-  style={backgroundImageSrc ? `--hero-bg-image: url("${backgroundImageSrc}")` : undefined}
+  style={backgroundImageSrc
+    ? `--hero-bg-image: url("${backgroundImageSrc}")`
+    : undefined}
 >
   <div class="hero-visual__inner">
     <div class="hero-visual__content">
-      {priceBadge && <a class="hero-visual__badge" href={ctaHref}>{priceBadge}</a>}
+      {
+        priceBadge && (
+          <a class="hero-visual__badge" href={ctaHref}>
+            {priceBadge}
+          </a>
+        )
+      }
       <h1 class="hero-visual__headline">
         {headline}
         {" "}
@@ -52,43 +60,80 @@ const callouts = [
       <p class="hero-visual__subline">{subline}</p>
       <div class="hero-visual__actions">
         <a class="hero-visual__button" href={ctaHref}>{cta}</a>
-        <a class="hero-visual__phone" href="tel:+78123444444">+7 (812) 344-44-44</a>
+        <a class="hero-visual__phone" href="tel:+78123444444"
+          >+7 (812) 344-44-44</a
+        >
       </div>
-      {pills.length > 0 && (
-        <ul class="hero-visual__pills" aria-label="Key benefits">
-          {pills.map((pill) => <li>{pill.text}</li>)}
-        </ul>
-      )}
+      {
+        pills.length > 0 && (
+          <ul class="hero-visual__pills" aria-label="Key benefits">
+            {pills.map((pill) => (
+              <li>{pill.text}</li>
+            ))}
+          </ul>
+        )
+      }
     </div>
     <div class="hero-visual__media-shell">
-      {imageSrc ? (
-        <a class="hero-visual__media glightbox" href={imageSrc} data-gallery="hero-visual" data-title={headline} aria-label={imageAlt || "Открыть изображение первого экрана"}>
-          <img
-            src={imageSrc}
-            alt={imageAlt}
-            width="1280"
-            height="1600"
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-          />
-        </a>
-      ) : (
-        <div class="hero-visual__media" aria-label="Инженерная схема установки металлической печи">
-          <div class="hero-visual__blueprint" aria-hidden="true">
-            <span class="hero-visual__blueprint-label">Согласованный монтажный узел</span>
-            <div class="hero-visual__chimney"><i></i><i></i><i></i></div>
-            <div class="hero-visual__stove"><b></b><span></span></div>
-            <div class="hero-visual__floor"></div>
+      {
+        imageSrc ? (
+          <a
+            class="hero-visual__media glightbox"
+            href={imageSrc}
+            data-gallery="hero-visual"
+            data-title={headline}
+            aria-label={imageAlt || "Открыть изображение первого экрана"}
+          >
+            <img
+              src={imageSrc}
+              alt={imageAlt}
+              width="1280"
+              height="1600"
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+            />
+          </a>
+        ) : (
+          <div
+            class="hero-visual__media"
+            aria-label="Инженерная схема установки металлической печи"
+          >
+            <div class="hero-visual__blueprint" aria-hidden="true">
+              <span class="hero-visual__blueprint-label">
+                Согласованный монтажный узел
+              </span>
+              <div class="hero-visual__chimney">
+                <>
+                  <i />
+                  <i />
+                  <i />
+                </>
+              </div>
+              <div class="hero-visual__stove">
+                <>
+                  <b />
+                  <span />
+                </>
+              </div>
+              <div class="hero-visual__floor" />
+            </div>
           </div>
-        </div>
-      )}
-      <ul class="hero-visual__callouts" aria-label="Ключевые элементы монтажного узла">
-        {callouts.map((callout) => (
-          <li class={`hero-visual__callout hero-visual__callout--${callout.position}`}>
-            {callout.label}
-          </li>
-        ))}
+        )
+      }
+      <ul
+        class="hero-visual__callouts"
+        aria-label="Ключевые элементы монтажного узла"
+      >
+        {
+          callouts.map((callout) => (
+            <li
+              class={`hero-visual__callout hero-visual__callout--${callout.position}`}
+            >
+              {callout.label}
+            </li>
+          ))
+        }
       </ul>
     </div>
   </div>
@@ -99,7 +144,7 @@ const callouts = [
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    padding: clamp(72px, 8vw, 116px) var(--space-4, 16px);
+    padding: clamp(72px, 8vw, 116px) var(--space-4, 16px) 32px;
     color: var(--color-text, #152028);
     background: var(--color-background, #f6f4ef);
     background-size: cover;
@@ -110,7 +155,10 @@ const callouts = [
     position: absolute;
     z-index: -1;
     inset: 0 40% 0 0;
-    background-image: radial-gradient(rgb(18 58 90 / 13%) 0.7px, transparent 0.7px);
+    background-image: radial-gradient(
+      rgb(18 58 90 / 13%) 0.7px,
+      transparent 0.7px
+    );
     background-size: 13px 13px;
     mask-image: linear-gradient(90deg, #000, transparent 92%);
     content: "";
@@ -128,7 +176,7 @@ const callouts = [
   .hero-visual__content {
     position: relative;
     z-index: 1;
-    animation: hero-copy-reveal 620ms both cubic-bezier(.2, .75, .25, 1);
+    animation: hero-copy-reveal 620ms both cubic-bezier(0.2, 0.75, 0.25, 1);
   }
 
   .hero-visual__badge {
@@ -144,7 +192,7 @@ const callouts = [
     color: var(--color-primary, #123a5a);
     font-size: 12px;
     font-weight: 800;
-    letter-spacing: .04em;
+    letter-spacing: 0.04em;
     text-decoration: none;
   }
 
@@ -164,9 +212,9 @@ const callouts = [
     color: var(--color-text, #152028);
     font-family: var(--font-heading, sans-serif);
     font-size: clamp(42px, 5.4vw, 70px);
-    line-height: .98;
+    line-height: 0.98;
     font-weight: 760;
-    letter-spacing: -.055em;
+    letter-spacing: -0.055em;
     text-wrap: balance;
   }
 
@@ -211,7 +259,9 @@ const callouts = [
     font-weight: 800;
     text-decoration: none;
     box-shadow: 0 6px 0 #b84916;
-    transition: transform 180ms ease, box-shadow 180ms ease;
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease;
   }
 
   .hero-visual__button:hover {
@@ -281,7 +331,8 @@ const callouts = [
   .hero-visual__media-shell {
     position: relative;
     min-width: 0;
-    animation: hero-media-reveal 700ms 120ms both cubic-bezier(.2, .75, .25, 1);
+    animation: hero-media-reveal 700ms 120ms both
+      cubic-bezier(0.2, 0.75, 0.25, 1);
   }
 
   .hero-visual__callouts {
@@ -314,12 +365,27 @@ const callouts = [
     content: "";
   }
 
-  .hero-visual__callout--wall { top: 32%; left: 12px; }
-  .hero-visual__callout--wall::after { left: 100%; }
-  .hero-visual__callout--chimney { top: 18%; right: 12px; }
-  .hero-visual__callout--chimney::after { right: 100%; }
-  .hero-visual__callout--base { right: 12px; bottom: 10%; }
-  .hero-visual__callout--base::after { right: 100%; }
+  .hero-visual__callout--wall {
+    top: 32%;
+    left: 12px;
+  }
+  .hero-visual__callout--wall::after {
+    left: 100%;
+  }
+  .hero-visual__callout--chimney {
+    top: 18%;
+    right: 12px;
+  }
+  .hero-visual__callout--chimney::after {
+    right: 100%;
+  }
+  .hero-visual__callout--base {
+    right: 12px;
+    bottom: 10%;
+  }
+  .hero-visual__callout--base::after {
+    right: 100%;
+  }
 
   .hero-visual__media img {
     width: 100%;
@@ -343,7 +409,10 @@ const callouts = [
     min-height: 100%;
     overflow: hidden;
     border-radius: var(--radius-card, 24px);
-    background: linear-gradient(rgb(255 255 255 / 7%) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 7%) 1px, transparent 1px), var(--color-primary-dark, #0b1f33);
+    background:
+      linear-gradient(rgb(255 255 255 / 7%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 7%) 1px, transparent 1px),
+      var(--color-primary-dark, #0b1f33);
     background-size: 32px 32px;
     box-shadow: var(--shadow-soft);
   }
@@ -364,7 +433,7 @@ const callouts = [
     font-family: var(--font-body);
     font-size: 12px;
     font-weight: 800;
-    letter-spacing: .12em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 
@@ -380,7 +449,11 @@ const callouts = [
     background: linear-gradient(90deg, #8795a0, #f8fafb 45%, #73828e);
   }
 
-  .hero-visual__chimney i { display: block; height: 33.333%; border-bottom: 2px solid #273640; }
+  .hero-visual__chimney i {
+    display: block;
+    height: 33.333%;
+    border-bottom: 2px solid #273640;
+  }
 
   .hero-visual__stove {
     position: absolute;
@@ -401,11 +474,33 @@ const callouts = [
     inset: 38px 32px 72px;
     border: 3px solid #7a8790;
     border-radius: 50% 50% 16px 16px;
-    background: radial-gradient(circle at 50% 80%, #ff9a4b, #b93815 35%, #1b1718 72%);
+    background: radial-gradient(
+      circle at 50% 80%,
+      #ff9a4b,
+      #b93815 35%,
+      #1b1718 72%
+    );
   }
 
-  .hero-visual__stove span { position: absolute; right: 28px; bottom: 32px; width: 54px; height: 8px; border-radius: 999px; background: #8c979e; }
-  .hero-visual__floor { position: absolute; right: 14%; bottom: 54px; left: 14%; height: 52px; transform: perspective(180px) rotateX(36deg); border: 2px solid #fff; background: rgb(231 101 37 / 74%); }
+  .hero-visual__stove span {
+    position: absolute;
+    right: 28px;
+    bottom: 32px;
+    width: 54px;
+    height: 8px;
+    border-radius: 999px;
+    background: #8c979e;
+  }
+  .hero-visual__floor {
+    position: absolute;
+    right: 14%;
+    bottom: 54px;
+    left: 14%;
+    height: 52px;
+    transform: perspective(180px) rotateX(36deg);
+    border: 2px solid #fff;
+    background: rgb(231 101 37 / 74%);
+  }
 
   .hero-visual__image-placeholder::before {
     position: absolute;
@@ -427,22 +522,36 @@ const callouts = [
   }
 
   @keyframes hero-copy-reveal {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes hero-media-reveal {
-    from { opacity: 0; transform: translateY(18px) scale(.985); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+      opacity: 0;
+      transform: translateY(18px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   @media (max-width: 820px) {
     .hero-visual {
       padding-top: 0;
-      padding-bottom: 68px;
+      padding-bottom: 32px;
     }
 
-    .hero-visual::before { inset: 34% 0 0; }
+    .hero-visual::before {
+      inset: 34% 0 0;
+    }
 
     .hero-visual__inner {
       grid-template-columns: 1fr;
@@ -459,24 +568,41 @@ const callouts = [
       border-radius: 0 0 22px 22px;
     }
 
-    .hero-visual__content { padding-top: 4px; }
+    .hero-visual__content {
+      padding-top: 4px;
+    }
 
     .hero-visual__headline {
       font-size: clamp(36px, 10vw, 48px);
-      line-height: .98;
+      line-height: 0.98;
     }
 
-    .hero-visual__actions { gap: 16px; }
+    .hero-visual__actions {
+      gap: 16px;
+    }
 
-    .hero-visual__button { width: 100%; }
-    .hero-visual__phone { width: 100%; text-align: center; }
-    .hero-visual__pills { margin-top: 28px; }
-    .hero-visual__blueprint { min-height: 100%; }
+    .hero-visual__button {
+      width: 100%;
+    }
+    .hero-visual__phone {
+      width: 100%;
+      text-align: center;
+    }
+    .hero-visual__pills {
+      margin-top: 28px;
+    }
+    .hero-visual__blueprint {
+      min-height: 100%;
+    }
   }
 
   @media (max-width: 480px) {
-    .hero-visual__pills { grid-template-columns: 1fr; }
-    .hero-visual__callout { font-size: 9px; }
+    .hero-visual__pills {
+      grid-template-columns: 1fr;
+    }
+    .hero-visual__callout {
+      font-size: 9px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -485,6 +611,8 @@ const callouts = [
       animation: none;
     }
 
-    .hero-visual__button { transition: none; }
+    .hero-visual__button {
+      transition: none;
+    }
   }
 </style>

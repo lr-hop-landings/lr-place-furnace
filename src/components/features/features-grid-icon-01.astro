@@ -24,21 +24,23 @@ const stepCount = items.length;
     </header>
 
     <ol class="features-grid__route">
-      {items.map((item, index) => (
-        <li
-          class:list={[
-            "features-grid__card",
-            { "features-grid__card--milestone": index === 3 || index === 7 },
-          ]}
-          data-route-step={index + 1}
-        >
-          <span class="features-grid__number" aria-hidden="true">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          <h3>{item.title}</h3>
-          <p>{item.text}</p>
-        </li>
-      ))}
+      {
+        items.map((item, index) => (
+          <li
+            class:list={[
+              "features-grid__card",
+              { "features-grid__card--milestone": index === 3 || index === 7 },
+            ]}
+            data-route-step={index + 1}
+          >
+            <span class="features-grid__number" aria-hidden="true">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </li>
+        ))
+      }
     </ol>
   </div>
 </section>
@@ -100,79 +102,98 @@ const stepCount = items.length;
 
   .features-grid__route {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 56px var(--space-5, 20px);
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1px;
+    background: var(--color-primary-dark, #0b1f33);
     margin: 64px 0 0;
-    padding: 0;
+    border-radius: 10px;
+    padding: 2px;
     list-style: none;
   }
 
   .features-grid__card {
     position: relative;
     min-width: 0;
-    min-height: 168px;
-    padding: 42px var(--space-6, 24px) var(--space-6, 24px);
-    border: 1px solid var(--color-border, #d6dee3);
-    border-radius: var(--radius-card, 24px);
+    padding: 40px 32px;
     background: var(--color-surface, #ffffff);
-    box-shadow: 6px 6px 0 var(--color-primary-dark, #0b1f33);
+    display: flex;
+    grid-column: span 4;
+    border-radius: 10px;
+    flex-direction: column;
+    z-index: 1;
+    transition:
+      transform 0.18s,
+      border-color 0.18s,
+      background-color 0.18s,
+      box-shadow 0.18s;
+    border: 2px solid var(--color-primary-dark, #0b1f33);
   }
 
-  .features-grid__card::before {
-    position: absolute;
-    z-index: 0;
-    top: -1px;
-    right: -10px;
-    left: -10px;
-    height: 2px;
-    background: var(--color-border, #d6dee3);
-    content: "";
+  .features-grid__card:hover {
+    transform: translate(-4px, -4px);
   }
 
-  .features-grid__card:nth-child(4n + 1)::before {
-    left: 24px;
+  .features-grid__card:nth-child(4) {
+    grid-column: span 8;
+  }
+  .features-grid__card:nth-child(6),
+  .features-grid__card:nth-child(7) {
+    grid-column: span 3;
+  }
+  .features-grid__card:nth-child(8) {
+    grid-column: span 6;
   }
 
-  .features-grid__card:nth-child(4n)::before {
-    right: calc(100% - 24px);
+  .features-grid__card:nth-child(4),
+  .features-grid__card:nth-child(8) {
+    &:hover {
+      border-color: #e76525;
+      /* box-shadow: 4px 4px 0 0 #e76525; */
+      & > h3 {
+        color: var(--color-accent);
+      }
+    }
   }
 
   .features-grid__number {
-    position: absolute;
-    z-index: 2;
-    top: 0;
-    left: 24px;
-    display: grid;
-    width: 48px;
-    height: 48px;
-    place-items: center;
-    border: 6px solid var(--color-background, #f6f4ef);
+    display: flex;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
     color: var(--color-white, #ffffff);
-    background: var(--color-primary, #123a5a);
+    background: var(--color-primary-dark, #0b1f33);
     font-family: var(--font-heading, sans-serif);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 800;
     line-height: 1;
-    transform: translateY(-50%);
+    transition: all 0.18s;
+    margin-bottom: var(--space-4, 16px);
   }
 
   .features-grid__card--milestone .features-grid__number {
     background: var(--color-accent, #e76525);
   }
 
+  .features-grid__card--milestone h3 {
+    color: var(--color-accent, #e76525);
+  }
+
   .features-grid h3,
   .features-grid__card > p {
     position: relative;
     z-index: 1;
+    transition: color 0.18s;
   }
 
   .features-grid h3 {
     margin: 0 0 var(--space-3, 12px);
-    color: var(--color-primary, #123a5a);
+    color: var(--color-primary-dark, #0b1f33);
     font-family: var(--font-heading, sans-serif);
-    font-size: var(--text-lg, 18px);
+    font-size: 1.25rem;
     line-height: 1.2;
+    font-weight: 700;
   }
 
   .features-grid__card > p {
@@ -185,24 +206,12 @@ const stepCount = items.length;
 
   @media (max-width: 1023px) {
     .features-grid__route {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(2, 1fr);
     }
 
     .features-grid__card {
-      min-height: 150px;
-    }
-
-    .features-grid__card::before {
-      right: -10px;
-      left: -10px;
-    }
-
-    .features-grid__card:nth-child(odd)::before {
-      left: 24px;
-    }
-
-    .features-grid__card:nth-child(even)::before {
-      right: calc(100% - 24px);
+      grid-column: span 1 !important;
+      padding: 32px 24px;
     }
   }
 
@@ -227,42 +236,18 @@ const stepCount = items.length;
     }
 
     .features-grid__route {
-      position: relative;
       grid-template-columns: 1fr;
-      gap: var(--space-4, 16px);
-      margin-top: 48px;
-      padding-left: 40px;
-    }
-
-    .features-grid__route::before {
-      position: absolute;
-      top: 16px;
-      bottom: 16px;
-      left: 16px;
-      width: 2px;
-      background: var(--color-border, #d6dee3);
-      content: "";
+      gap: 1px;
+      margin-top: 40px;
+      padding-left: 0;
     }
 
     .features-grid__card {
-      min-height: 0;
-      padding: 20px 18px 20px 22px;
-      border-radius: 18px;
-      box-shadow: 4px 4px 0 var(--color-primary-dark, #0b1f33);
-    }
-
-    .features-grid__card::before {
-      display: none;
+      padding: 24px 20px;
     }
 
     .features-grid__number {
-      top: 18px;
-      left: -41px;
-      width: 34px;
-      height: 34px;
-      border-width: 5px;
-      font-size: 0.58rem;
-      transform: none;
+      margin-bottom: 12px;
     }
 
     .features-grid h3 {

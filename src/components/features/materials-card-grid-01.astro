@@ -15,85 +15,129 @@ interface Props {
   variant?: "cards" | "equipment-lineup";
 }
 
-const { headline, subline, items, label = "Стоимость", variant = "cards" } = Astro.props;
+const {
+  headline,
+  subline,
+  items,
+  label = "Стоимость",
+  variant = "cards",
+} = Astro.props;
 const isEquipmentLineup = variant === "equipment-lineup";
 ---
 
 <section
-  class:list={["card-grid", { "card-grid--equipment-lineup": isEquipmentLineup }]}
+  class:list={[
+    "card-grid",
+    { "card-grid--equipment-lineup": isEquipmentLineup },
+  ]}
   data-card-grid-variant={variant}
   data-equipment-lineup={isEquipmentLineup ? "" : undefined}
 >
   <div class="card-grid__inner">
     <header class="card-grid__header">
-      {isEquipmentLineup && <p class="card-grid__eyebrow">Готовые металлические печи</p>}
+      {
+        isEquipmentLineup && (
+          <p class="card-grid__eyebrow">Готовые металлические печи</p>
+        )
+      }
       <h2>{headline}</h2>
       {subline && <p class="card-grid__subline">{subline}</p>}
     </header>
 
-    {isEquipmentLineup ? (
-      <ul class="card-grid__lineup">
-        {items.map((item, index) => (
-          <li class="card-grid__lineup-item">
-            <div class="card-grid__lineup-visual">
-              {item.image && (
-                <img
-                  src={item.image}
-                  alt={item.imageAlt ?? item.name}
-                  width="960"
-                  height="1200"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
-            </div>
-            <div class="card-grid__lineup-body">
-              <span class="card-grid__lineup-number" aria-hidden="true">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <h3>{item.name}</h3>
-              <p>{item.text}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <div
-        class="card-grid__slider swiper"
-        data-swiper-options='{"slidesPerView":1,"spaceBetween":20,"breakpoints":{"680":{"slidesPerView":2},"1040":{"slidesPerView":3}}}'
-      >
-        <div class="card-grid__items swiper-wrapper">
-          {items.map((item) => (
-            <article class="card-grid__card swiper-slide">
-              {item.image ? (
-                <a class="card-grid__image glightbox" href={item.image} data-gallery="card-grid" data-title={item.name}>
-                  <img src={item.image} alt={item.imageAlt ?? item.name} loading="lazy" />
-                </a>
-              ) : (
-                <div class="card-grid__image" aria-label="Плейсхолдер изображения">
-                  <div class="card-grid__image-placeholder"></div>
+    {
+      isEquipmentLineup ? (
+        <div
+          class="card-grid__lineup-slider swiper"
+          data-swiper-options='{"slidesPerView":"auto","spaceBetween":16,"breakpoints":{"1024":{"slidesPerView":4,"spaceBetween":24}}}'
+        >
+          <div class="card-grid__lineup swiper-wrapper">
+            {items.map((item, index) => (
+              <article class="card-grid__lineup-item swiper-slide">
+                <div class="card-grid__lineup-visual">
+                  {item.image && (
+                    <img
+                      src={item.image}
+                      alt={item.imageAlt ?? item.name}
+                      width="960"
+                      height="1200"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
                 </div>
-              )}
-              <div class="card-grid__body">
-                <h3>{item.name}</h3>
-                <p>{item.text}</p>
-                {item.price && (
-                  <div class="card-grid__footer">
-                    <span>{label}</span>
-                    <strong>{item.price}</strong>
+                <div class="card-grid__lineup-body">
+                  <span class="card-grid__lineup-number" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h3>{item.name}</h3>
+                  <p>{item.text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div
+          class="card-grid__slider swiper"
+          data-swiper-options='{"slidesPerView":1,"spaceBetween":20,"breakpoints":{"680":{"slidesPerView":2},"1040":{"slidesPerView":3}}}'
+        >
+          <div class="card-grid__items swiper-wrapper">
+            {items.map((item) => (
+              <article class="card-grid__card swiper-slide">
+                {item.image ? (
+                  <a
+                    class="card-grid__image glightbox"
+                    href={item.image}
+                    data-gallery="card-grid"
+                    data-title={item.name}
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.imageAlt ?? item.name}
+                      loading="lazy"
+                    />
+                  </a>
+                ) : (
+                  <div
+                    class="card-grid__image"
+                    aria-label="Плейсхолдер изображения"
+                  >
+                    <div class="card-grid__image-placeholder" />
                   </div>
                 )}
-              </div>
-            </article>
-          ))}
+                <div class="card-grid__body">
+                  <h3>{item.name}</h3>
+                  <p>{item.text}</p>
+                  {item.price && (
+                    <div class="card-grid__footer">
+                      <span>{label}</span>
+                      <strong>{item.price}</strong>
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+          <div class="card-grid__nav" aria-label="Card slider controls">
+            <button
+              class="swiper-button-prev"
+              type="button"
+              aria-label="Предыдущая карточка"
+            >
+              Назад
+            </button>
+            <button
+              class="swiper-button-next"
+              type="button"
+              aria-label="Следующая карточка"
+            >
+              Вперед
+            </button>
+          </div>
+          <div class="swiper-pagination" />
         </div>
-        <div class="card-grid__nav" aria-label="Card slider controls">
-          <button class="swiper-button-prev" type="button" aria-label="Предыдущая карточка">Назад</button>
-          <button class="swiper-button-next" type="button" aria-label="Следующая карточка">Вперед</button>
-        </div>
-        <div class="swiper-pagination"></div>
-      </div>
-    )}
+      )
+    }
   </div>
 </section>
 
@@ -151,6 +195,20 @@ const isEquipmentLineup = variant === "equipment-lineup";
     border-radius: var(--radius-card, 20px);
     background: var(--color-background, #ffffff);
     box-shadow: var(--shadow-hard, 6px 6px 0 #000000);
+    transition:
+      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (hover: hover) {
+    .card-grid__card:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 10px 10px 0 #000000;
+    }
+
+    .card-grid__card:hover .card-grid__image img {
+      transform: scale(1.05);
+    }
   }
 
   .card-grid__image {
@@ -166,6 +224,7 @@ const isEquipmentLineup = variant === "equipment-lineup";
     height: 100%;
     display: block;
     object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .card-grid__image-placeholder {
@@ -319,11 +378,23 @@ const isEquipmentLineup = variant === "equipment-lineup";
     line-height: var(--leading-relaxed, 1.65);
   }
 
+  .card-grid__lineup-slider {
+    overflow: visible;
+    margin-top: 56px;
+  }
+
   .card-grid__lineup {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin: 56px 0 0;
+    display: flex;
+    margin: 0;
     padding: 0;
+    align-items: stretch;
+  }
+
+  .card-grid__lineup-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: auto;
     overflow: hidden;
     border: 1px solid rgb(255 255 255 / 16%);
     border-radius: var(--radius-card, 24px);
@@ -331,30 +402,41 @@ const isEquipmentLineup = variant === "equipment-lineup";
       linear-gradient(rgb(255 255 255 / 5%) 1px, transparent 1px),
       linear-gradient(90deg, rgb(255 255 255 / 5%) 1px, transparent 1px),
       linear-gradient(145deg, #153a54, #0b263a);
-    background-size: 32px 32px, 32px 32px, auto;
-    list-style: none;
+    background-size:
+      32px 32px,
+      32px 32px,
+      auto;
+    transition:
+      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.3s ease;
   }
 
-  .card-grid__lineup-item {
-    min-width: 0;
-    border-right: 1px solid rgb(255 255 255 / 14%);
-  }
+  @media (hover: hover) {
+    .card-grid__lineup-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      border-color: rgb(255 255 255 / 32%);
+    }
 
-  .card-grid__lineup-item:last-child {
-    border-right: 0;
+    .card-grid__lineup-item:hover .card-grid__lineup-visual img {
+      transform: scale(1.05);
+    }
   }
 
   .card-grid__lineup-visual {
     height: clamp(240px, 22vw, 310px);
-    padding: 20px 18px 0;
+    padding: 0;
     border-bottom: 1px solid rgb(255 255 255 / 28%);
+    overflow: hidden;
   }
 
   .card-grid__lineup-visual img {
     width: 100%;
     height: 100%;
     display: block;
-    object-fit: contain;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .card-grid__lineup-body {
@@ -386,20 +468,12 @@ const isEquipmentLineup = variant === "equipment-lineup";
   }
 
   @media (max-width: 1023px) {
-    .card-grid__lineup {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .card-grid__lineup-item:nth-child(2) {
-      border-right: 0;
-    }
-
-    .card-grid__lineup-item:nth-child(-n + 2) {
-      border-bottom: 1px solid rgb(255 255 255 / 14%);
+    .card-grid__lineup-item {
+      width: min(340px, calc(100vw - 60px));
     }
 
     .card-grid__lineup-visual {
-      height: 300px;
+      height: 280px;
     }
   }
 
@@ -418,33 +492,23 @@ const isEquipmentLineup = variant === "equipment-lineup";
       line-height: 1.6;
     }
 
-    .card-grid__lineup {
-      grid-template-columns: 1fr;
-      gap: var(--space-3, 12px);
+    .card-grid__lineup-slider {
       margin-top: 40px;
-      overflow: visible;
-      border: 0;
-      border-radius: 0;
-      background: none;
     }
 
-    .card-grid__lineup-item,
-    .card-grid__lineup-item:nth-child(2),
-    .card-grid__lineup-item:nth-child(-n + 2),
-    .card-grid__lineup-item:last-child {
+    .card-grid__lineup-item {
       display: grid;
       grid-template-columns: minmax(104px, 34%) minmax(0, 1fr);
       min-height: 148px;
-      overflow: hidden;
-      border: 1px solid rgb(255 255 255 / 16%);
       border-radius: 16px;
       background: rgb(255 255 255 / 5%);
+      width: calc(100vw - 40px);
     }
 
     .card-grid__lineup-visual {
+      overflow: hidden;
       height: 100%;
       min-height: 148px;
-      padding: 8px;
       border-right: 1px solid rgb(255 255 255 / 12%);
       border-bottom: 0;
       background: linear-gradient(145deg, #183e58, #0b283b);

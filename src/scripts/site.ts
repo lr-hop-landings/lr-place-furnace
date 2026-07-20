@@ -67,6 +67,15 @@ const normalizePhone = (raw: string) => {
   return body ? `+7${body}` : "";
 };
 
+const formatPhone = (digits: string) => {
+  let res = "+7";
+  if (digits.length > 0) res += " (" + digits.slice(0, 3);
+  if (digits.length >= 4) res += ") " + digits.slice(3, 6);
+  if (digits.length >= 7) res += "-" + digits.slice(6, 8);
+  if (digits.length >= 9) res += "-" + digits.slice(8, 10);
+  return res;
+};
+
 interface QuizState {
   currentStep: number;
   values: Map<string, string | string[]>;
@@ -92,6 +101,7 @@ interface QuizView {
   dialpadDisplay: HTMLOutputElement | null;
   fileInput: HTMLInputElement | null;
   fileSummary: HTMLElement | null;
+  topline: HTMLElement | null;
 }
 
 const persistedQuizFields = new Set([
@@ -138,6 +148,7 @@ const initLeadQuiz = () => {
         dialpadDisplay: form.querySelector<HTMLOutputElement>("[data-dialpad-display]"),
         fileInput: form.querySelector<HTMLInputElement>("[data-file-input]"),
         fileSummary: viewRoot.querySelector<HTMLElement>("[data-file-summary]"),
+        topline: viewRoot.querySelector<HTMLElement>(".lead-quiz-form__topline"),
       };
     });
 
@@ -212,15 +223,28 @@ const initLeadQuiz = () => {
     };
 
     const render = () => {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+
+      const isTechnicalOrFinal = state.currentStep >= totalSteps - 2;
+      const visualTotalSteps = totalSteps - 2;
+
       views.forEach((view) => {
         view.steps.forEach((step, index) => step.classList.toggle("is-active", index === state.currentStep));
-        if (view.backButton) view.backButton.hidden = state.currentStep === 0;
-        if (view.nextButton) view.nextButton.hidden = state.currentStep === totalSteps - 1;
+        if (view.backButton) view.backButton.hidden = state.currentStep === 0 || isTechnicalOrFinal;
+        if (view.nextButton) view.nextButton.hidden = isTechnicalOrFinal;
         if (view.submitButton) view.submitButton.hidden = state.currentStep !== totalSteps - 1;
-        const ratio = ((state.currentStep + 1) / totalSteps) * 100;
-        if (view.progress) view.progress.style.width = `${ratio}%`;
-        if (view.progressRoot) view.progressRoot.setAttribute("aria-valuenow", String(state.currentStep + 1));
-        if (view.stepLabel) view.stepLabel.textContent = `Шаг ${state.currentStep + 1} из ${totalSteps}`;
+
+        if (view.topline) view.topline.style.display = isTechnicalOrFinal ? "none" : "";
+        if (view.progressRoot) view.progressRoot.style.display = isTechnicalOrFinal ? "none" : "";
+
+        if (!isTechnicalOrFinal) {
+          const ratio = ((state.currentStep + 1) / visualTotalSteps) * 100;
+          if (view.progress) view.progress.style.width = `${ratio}%`;
+          if (view.progressRoot) view.progressRoot.setAttribute("aria-valuenow", String(state.currentStep + 1));
+        if (view.stepLabel) view.stepLabel.textContent = `Шаг ${state.currentStep + 1} из ${visualTotalSteps}`;
+        }
       });
       renderValues();
       renderPhone();
@@ -248,10 +272,11 @@ const initLeadQuiz = () => {
     };
 
     const updatePhone = (raw: string) => {
-      const normalized = normalizePhone(raw);
-      state.phoneDigits = normalized.startsWith("+7") ? normalized.slice(2) : "";
-      state.values.set("phone", normalized);
-      state.values.set("__phoneDisplay", raw);
+      const digits = raw.replace(/\D/g, "");
+      const body = digits.startsWith("7") || digits.startsWith("8") ? digits.slice(1, 11) : digits.slice(0, 10);
+      state.phoneDigits = body;
+      state.values.set("phone", body ? `+7${body}` : "");
+      state.values.set("__phoneDisplay", body ? formatPhone(body) : (raw.startsWith("+") ? raw : ""));
       renderPhone();
     };
 
@@ -285,6 +310,21 @@ const initLeadQuiz = () => {
     };
 
     views.forEach((view) => {
+      const advanceStep = () => {
+        if (!validateStep(view)) return;
+        state.currentStep = Math.min(totalSteps - 1, state.currentStep + 1);
+        render();
+
+        if (state.currentStep === totalSteps - 2) {
+          setTimeout(() => {
+            if (state.currentStep === totalSteps - 2) {
+              state.currentStep++;
+              render();
+            }
+          }, 2000);
+        }
+      };
+
       view.form.addEventListener("input", (event) => {
         const target = event.target;
         if (target instanceof HTMLInputElement && target.matches("[data-phone-input]")) {
@@ -305,16 +345,24 @@ const initLeadQuiz = () => {
         }
       });
 
+      view.form.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement) || target.type !== "radio") return;
+        // Don't auto-advance on checkbox-type steps (e.g. services[])
+        const step = view.steps[state.currentStep];
+        if (!step) return;
+        const isCheckboxStep = step.querySelector('input[type="checkbox"]') !== null;
+        if (isCheckboxStep) return;
+        updateStateFromControl(target);
+        setTimeout(advanceStep, 300);
+      });
+
       view.backButton?.addEventListener("click", () => {
         state.currentStep = Math.max(0, state.currentStep - 1);
         render();
       });
 
-      view.nextButton?.addEventListener("click", () => {
-        if (!validateStep(view)) return;
-        state.currentStep = Math.min(totalSteps - 1, state.currentStep + 1);
-        render();
-      });
+      view.nextButton?.addEventListener("click", advanceStep);
 
       view.dialpad?.addEventListener("click", (event) => {
         const button = (event.target as HTMLElement).closest<HTMLButtonElement>("button");
@@ -323,7 +371,7 @@ const initLeadQuiz = () => {
         if (button.hasAttribute("data-backspace")) state.phoneDigits = state.phoneDigits.slice(0, -1);
         if (button.hasAttribute("data-clear")) state.phoneDigits = "";
         state.values.set("phone", state.phoneDigits ? `+7${state.phoneDigits}` : "");
-        state.values.set("__phoneDisplay", state.phoneDigits ? `+7 ${state.phoneDigits}` : "");
+        state.values.set("__phoneDisplay", state.phoneDigits ? formatPhone(state.phoneDigits) : "");
         renderPhone();
       });
 
@@ -334,14 +382,13 @@ const initLeadQuiz = () => {
       });
 
       view.form.addEventListener("submit", (event) => {
-        const location = view.form.querySelector<HTMLInputElement>('[name="location"]');
         const consent = view.form.querySelector<HTMLInputElement>('[name="consent"]');
         const contactError = view.form.querySelector<HTMLElement>("[data-contact-error]");
         const phone = String(state.values.get("phone") ?? "");
-        if (!phone.match(/^\+7\d{10}$/) || !location?.value.trim() || !consent?.checked) {
+        if (!phone.match(/^\+7\d{10}$/) || !consent?.checked) {
           event.preventDefault();
           if (contactError) contactError.hidden = false;
-          (!phone ? view.phoneInput || view.dialpad : !location?.value.trim() ? location : consent)?.focus();
+          (!phone ? view.phoneInput || view.dialpad : consent)?.focus();
           return;
         }
         views.forEach((item) => {
@@ -365,10 +412,10 @@ const initLeadQuiz = () => {
 
     openButton?.addEventListener("click", () => {
       lastFocus = document.activeElement as HTMLElement;
-      render();
       modal?.classList.add("is-open");
       modal?.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
+      render();
       closeButton?.focus();
     });
     closeButton?.addEventListener("click", closeModal);
@@ -457,11 +504,15 @@ const initLocalFormFallback = () => {
     form.addEventListener("submit", (event) => {
       if (event.defaultPrevented) return;
       event.preventDefault();
-      const status = form.closest("[data-lead-root]")?.querySelector<HTMLElement>("[data-lead-status]");
-      if (status) {
-        status.hidden = false;
-        status.textContent = "Тестовый режим: форма валидна. На рабочем сайте заявку перехватит HTML On Page Lead Capture.";
-        status.focus();
+      
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      console.log("=== Quiz Form Data ===", data);
+      
+      const success = form.closest("[data-lead-root]")?.querySelector<HTMLElement>("[data-lead-success]");
+      if (success) {
+        success.hidden = false;
+        success.focus();
       }
     });
   });

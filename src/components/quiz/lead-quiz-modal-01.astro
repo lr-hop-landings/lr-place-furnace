@@ -22,6 +22,7 @@ const {
   badge,
   headline,
   subline,
+  triggerText,
   steps,
   submitText = "Получить расчёт монтажа",
   privacyText = "Нажимая кнопку, вы соглашаетесь на обработку персональных данных.",
@@ -48,12 +49,18 @@ const {
       submitText={submitText}
       privacyText={privacyText}
     />
+
+    <button type="button" data-quiz-open hidden aria-hidden="true">{triggerText}</button>
   </div>
 
   <div class="lead-quiz__modal" data-quiz-modal aria-hidden="true">
     <div class="lead-quiz__dialog" role="dialog" aria-modal="true" aria-labelledby={`${id}-modal-title`}>
       <h2 id={`${id}-modal-title`} class="lead-quiz__visually-hidden">Расчёт монтажа</h2>
-      <button class="lead-quiz__close" type="button" data-quiz-close aria-label="Закрыть квиз">×</button>
+      <button class="lead-quiz__close" type="button" data-quiz-close aria-label="Закрыть квиз">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
       <QuizForm
         instance="modal"
         quizId={id}
@@ -167,6 +174,9 @@ const {
     top: 13px;
     right: 13px;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 42px;
     height: 42px;
     border: 0;
@@ -174,7 +184,11 @@ const {
     color: var(--color-text, #152028);
     background: var(--color-background, #f6f4ef);
     cursor: pointer;
-    font-size: 26px;
+  }
+
+  .lead-quiz__close svg {
+    width: 24px;
+    height: 24px;
   }
 
   .lead-quiz__close:focus,
