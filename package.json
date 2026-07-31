@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
-    "build": "set ASTRO_TELEMETRY_DISABLED=1&& astro build",
+    "build": "set ASTRO_TELEMETRY_DISABLED=1&& astro build && node scripts/prepare-sites-static.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "check": "astro check",
     "qr": "node scripts/generate-qr.mjs",
