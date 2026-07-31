@@ -1,8 +1,16 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 const serverDir = join(process.cwd(), "dist", "server");
 const workerPath = join(serverDir, "index.js");
+const buildDir = join(process.cwd(), "dist");
+const clientDir = join(buildDir, "client");
+
+await mkdir(clientDir, { recursive: true });
+for (const entry of await readdir(buildDir)) {
+  if (entry === "client" || entry === "server") continue;
+  await rename(join(buildDir, entry), join(clientDir, entry));
+}
 
 await mkdir(serverDir, { recursive: true });
 await writeFile(
