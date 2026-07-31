@@ -2,6 +2,8 @@
 interface QuizStep {
   question: string;
   options: string[];
+  name?: string;
+  multiple?: boolean;
 }
 
 interface Props {
@@ -10,9 +12,17 @@ interface Props {
   steps: QuizStep[];
   submitText: string;
   privacyText: string;
+  service?: string;
 }
 
-const { instance, quizId, steps, submitText, privacyText } = Astro.props;
+const {
+  instance,
+  quizId,
+  steps,
+  submitText,
+  privacyText,
+  service = "Установка металлической печи",
+} = Astro.props;
 const prefix = `${quizId}-${instance}`;
 const stepNames = [
   "object_type",
@@ -51,7 +61,7 @@ const totalSteps = steps.length + 1;
     <input
       type="hidden"
       name="quiz_service"
-      value="Установка металлической печи"
+      value={service}
     />
     <input type="hidden" name="phone" data-phone-value value="" />
 
@@ -68,12 +78,13 @@ const totalSteps = steps.length + 1;
           <div class="lead-quiz-form__options">
             {step.options.map((option, optionIndex) => {
               const optionId = `${prefix}-step-${stepIndex}-option-${optionIndex}`;
+              const isMultiple = step.multiple ?? stepIndex === 3;
               return (
                 <label class="lead-quiz-form__option" for={optionId}>
                   <input
                     id={optionId}
-                    type={stepIndex === 3 ? "checkbox" : "radio"}
-                    name={stepNames[stepIndex]}
+                    type={isMultiple ? "checkbox" : "radio"}
+                    name={step.name ?? stepNames[stepIndex] ?? `step_${stepIndex + 1}`}
                     value={option}
                   />
                   <span>{option}</span>

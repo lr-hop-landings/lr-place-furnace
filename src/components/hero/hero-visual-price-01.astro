@@ -3,6 +3,11 @@ interface Pill {
   text: string;
 }
 
+interface Callout {
+  label: string;
+  position: "wall" | "chimney" | "base";
+}
+
 interface Props {
   headline: string;
   accent?: string;
@@ -14,6 +19,7 @@ interface Props {
   imageSrc?: string;
   imageAlt?: string;
   backgroundImageSrc?: string;
+  callouts?: Callout[];
 }
 
 const {
@@ -27,13 +33,14 @@ const {
   imageSrc,
   imageAlt = "",
   backgroundImageSrc,
+  callouts,
 } = Astro.props;
 
-const callouts = [
+const resolvedCallouts = callouts ?? [
   { label: "Защита стены", position: "wall" },
   { label: "Дымоход", position: "chimney" },
   { label: "Основание", position: "base" },
-];
+] satisfies Callout[];
 ---
 
 <section
@@ -97,7 +104,7 @@ const callouts = [
         ) : (
           <div
             class="hero-visual__media"
-            aria-label="Инженерная схема установки металлической печи"
+            aria-label="Инженерная схема печного узла"
           >
             <div class="hero-visual__blueprint" aria-hidden="true">
               <span class="hero-visual__blueprint-label">
@@ -123,10 +130,10 @@ const callouts = [
       }
       <ul
         class="hero-visual__callouts"
-        aria-label="Ключевые элементы монтажного узла"
+        aria-label="Ключевые элементы печного узла"
       >
         {
-          callouts.map((callout) => (
+          resolvedCallouts.map((callout) => (
             <li
               class={`hero-visual__callout hero-visual__callout--${callout.position}`}
             >

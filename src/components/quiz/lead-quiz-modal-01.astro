@@ -4,6 +4,8 @@ import QuizForm from "./lead-quiz-form.astro";
 interface QuizStep {
   question: string;
   options: string[];
+  name?: string;
+  multiple?: boolean;
 }
 
 interface Props {
@@ -15,6 +17,9 @@ interface Props {
   steps: QuizStep[];
   submitText?: string;
   privacyText?: string;
+  service?: string;
+  benefits?: string[];
+  modalTitle?: string;
 }
 
 const {
@@ -26,6 +31,13 @@ const {
   steps,
   submitText = "Получить расчёт монтажа",
   privacyText = "Нажимая кнопку, вы соглашаетесь на обработку персональных данных.",
+  service = "Установка металлической печи",
+  benefits = [
+    "Предварительный состав работ",
+    "Список недостающих данных",
+    "Рекомендация: расчёт по фото или выезд",
+  ],
+  modalTitle = "Расчёт монтажа",
 } = Astro.props;
 ---
 
@@ -35,11 +47,7 @@ const {
       {badge && <p class="lead-quiz__badge">{badge}</p>}
       <h2 id={`${id}-title`}>{headline}</h2>
       {subline && <p class="lead-quiz__subline">{subline}</p>}
-      <ul>
-        <li>Предварительный состав работ</li>
-        <li>Список недостающих данных</li>
-        <li>Рекомендация: расчёт по фото или выезд</li>
-      </ul>
+      <ul>{benefits.map((benefit) => <li>{benefit}</li>)}</ul>
     </div>
 
     <QuizForm
@@ -48,6 +56,7 @@ const {
       steps={steps}
       submitText={submitText}
       privacyText={privacyText}
+      service={service}
     />
 
     <button type="button" data-quiz-open hidden aria-hidden="true">{triggerText}</button>
@@ -55,7 +64,7 @@ const {
 
   <div class="lead-quiz__modal" data-quiz-modal aria-hidden="true">
     <div class="lead-quiz__dialog" role="dialog" aria-modal="true" aria-labelledby={`${id}-modal-title`}>
-      <h2 id={`${id}-modal-title`} class="lead-quiz__visually-hidden">Расчёт монтажа</h2>
+      <h2 id={`${id}-modal-title`} class="lead-quiz__visually-hidden">{modalTitle}</h2>
       <button class="lead-quiz__close" type="button" data-quiz-close aria-label="Закрыть квиз">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -67,6 +76,7 @@ const {
         steps={steps}
         submitText={submitText}
         privacyText={privacyText}
+        service={service}
       />
     </div>
   </div>

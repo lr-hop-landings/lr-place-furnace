@@ -3,16 +3,28 @@ interface Props {
   headline: string;
   subline?: string;
   cta: string;
+  service?: string;
+  eyebrow?: string;
+  microcopy?: string;
+  successText?: string;
 }
 
-const { headline, subline, cta } = Astro.props;
+const {
+  headline,
+  subline,
+  cta,
+  service = "Установка металлической печи",
+  eyebrow = "Оставьте номер — уточним детали",
+  microcopy = "Без обязательства заказывать монтаж. Точная смета — после получения необходимых параметров.",
+  successText = "Спасибо! Заявка принята. Мы свяжемся с вами по указанному номеру.",
+} = Astro.props;
 ---
 
 <section class="contact-card" id="contacts" aria-labelledby="final-cta-title">
   <div class="contact-card__inner">
     <div class="contact-card__panel" data-lead-root>
       <div class="contact-card__copy">
-        <p class="contact-card__eyebrow">Оставьте номер — уточним детали</p>
+        <p class="contact-card__eyebrow">{eyebrow}</p>
         <h2 id="final-cta-title">{headline}</h2>
         {subline && <p>{subline}</p>}
         <div class="contact-card__phones">
@@ -27,7 +39,7 @@ const { headline, subline, cta } = Astro.props;
       </div>
 
       <form class="contact-card__form" data-hop-lead-form novalidate>
-        <input type="hidden" name="quiz_service" value="Установка металлической печи" />
+        <input type="hidden" name="quiz_service" value={service} />
         <input type="hidden" name="phone" data-final-phone-value />
         <label class="contact-card__desktop-phone">
           <span>Телефон *</span>
@@ -48,10 +60,10 @@ const { headline, subline, cta } = Astro.props;
           <span>Соглашаюсь на обработку персональных данных. URL политики будет добавлен перед публикацией.</span>
         </label>
         <button class="contact-card__submit" type="submit">{cta}</button>
-        <p class="contact-card__microcopy">Без обязательства заказывать монтаж. Точная смета — после получения необходимых параметров.</p>
+        <p class="contact-card__microcopy">{microcopy}</p>
         <p class="contact-card__status" data-lead-status tabindex="-1" hidden></p>
       </form>
-      <div data-lead-success hidden>Спасибо! Заявка принята. Мы свяжемся с вами по указанному номеру.</div>
+      <div data-lead-success hidden>{successText}</div>
     </div>
   </div>
 </section>

@@ -9,16 +9,18 @@ interface Props {
   headline: string;
   subline?: string;
   items: Feature[];
+  eyebrow?: string;
 }
 
-const { headline, subline, items } = Astro.props;
+const { headline, subline, items, eyebrow } = Astro.props;
 const stepCount = items.length;
+const resolvedEyebrow = eyebrow ?? `Монтаж под ключ · ${stepCount} этапов`;
 ---
 
 <section class="features-grid" data-installation-route>
   <div class="features-grid__inner">
     <header class="features-grid__header">
-      <p class="features-grid__eyebrow">Монтаж под ключ · {stepCount} этапов</p>
+      <p class="features-grid__eyebrow">{resolvedEyebrow}</p>
       <h2>{headline}</h2>
       {subline && <p class="features-grid__subline">{subline}</p>}
     </header>
