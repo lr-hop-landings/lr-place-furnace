@@ -15,8 +15,8 @@ const {
   cta,
   service = "Установка металлической печи",
   eyebrow = "Оставьте номер — уточним детали",
-  microcopy = "Без обязательства заказывать монтаж. Точная смета — после получения необходимых параметров.",
-  successText = "Спасибо! Заявка принята. Мы свяжемся с вами по указанному номеру.",
+  microcopy = "Точную цену назовём после уточнения деталей.",
+  successText = "Спасибо! Свяжемся с вами и уточним детали.",
 } = Astro.props;
 ---
 
@@ -32,38 +32,90 @@ const {
           <a href="tel:88005554510">8 (800) 555-45-10</a>
         </div>
         <div class="contact-card__socials" aria-label="Социальные сети">
-          <a href="https://vk.com/lenremont" target="_blank" rel="noopener noreferrer">VK</a>
-          <a href="https://t.me/lenremont" target="_blank" rel="noopener noreferrer">Telegram</a>
-          <a href="https://max.ru/id471902475874_3_bot" target="_blank" rel="noopener noreferrer">MAX</a>
+          <a
+            href="https://vk.com/lenremont"
+            target="_blank"
+            rel="noopener noreferrer">VK</a
+          >
+          <a
+            href="https://t.me/lenremont"
+            target="_blank"
+            rel="noopener noreferrer">Telegram</a
+          >
+          <a
+            href="https://max.ru/id471902475874_3_bot"
+            target="_blank"
+            rel="noopener noreferrer">MAX</a
+          >
         </div>
       </div>
 
-      <form class="contact-card__form" data-hop-lead-form novalidate>
-        <input type="hidden" name="quiz_service" value={service} />
-        <input type="hidden" name="phone" data-final-phone-value />
-        <label class="contact-card__desktop-phone">
-          <span>Телефон *</span>
-          <input type="tel" data-final-phone-input placeholder="+7 (___) ___-__-__" autocomplete="tel" inputmode="tel" />
-        </label>
-        <div class="contact-card__dialpad" data-final-dialpad tabindex="-1">
-          <span>Телефон *</span>
-          <output data-final-dialpad-display aria-live="polite">+7</output>
-          <div>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => <button type="button" data-digit={digit}>{digit}</button>)}
-            <button type="button" data-clear aria-label="Очистить номер">C</button>
-            <button type="button" data-digit="0">0</button>
-            <button type="button" data-backspace aria-label="Удалить последнюю цифру">⌫</button>
+      <div class="contact-card__form-wrapper">
+        <form class="contact-card__form" data-hop-lead-form novalidate>
+          <input type="hidden" name="quiz_service" value={service} />
+          <input type="hidden" name="phone" data-final-phone-value />
+          <label class="contact-card__desktop-phone">
+            <span>Телефон *</span>
+            <input
+              type="tel"
+              data-final-phone-input
+              placeholder="+7 (___) ___-__-__"
+              autocomplete="tel"
+              inputmode="tel"
+            />
+          </label>
+          <div class="contact-card__dialpad" data-final-dialpad tabindex="-1">
+            <span>Телефон *</span>
+            <output data-final-dialpad-display aria-live="polite">+7</output>
+            <div>
+              {
+                [1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => (
+                  <button type="button" data-digit={digit}>
+                    {digit}
+                  </button>
+                ))
+              }
+              <button type="button" data-clear aria-label="Очистить номер"
+                >C</button
+              >
+              <button type="button" data-digit="0">0</button>
+              <button
+                type="button"
+                data-backspace
+                aria-label="Удалить последнюю цифру">⌫</button
+              >
+            </div>
           </div>
+          <label class="contact-card__consent">
+            <input type="checkbox" name="consent" checked value="Да" required />
+            <span>Соглашаюсь на обработку персональных данных.</span>
+          </label>
+          <p class="contact-card__error" data-contact-error hidden>
+            Пожалуйста, введите полный номер телефона (10 цифр) и подтвердите
+            согласие.
+          </p>
+          <button class="contact-card__submit" type="submit">{cta}</button>
+          <p class="contact-card__microcopy">{microcopy}</p>
+          <p class="contact-card__status" data-lead-status tabindex="-1" hidden>
+          </p>
+        </form>
+        <div class="contact-card__success" data-lead-success hidden>
+          <div class="contact-card__success-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h3>Отлично, заявка принята!</h3>
+          <p>{successText}</p>
         </div>
-        <label class="contact-card__consent">
-          <input type="checkbox" name="consent" value="Да" required />
-          <span>Соглашаюсь на обработку персональных данных. URL политики будет добавлен перед публикацией.</span>
-        </label>
-        <button class="contact-card__submit" type="submit">{cta}</button>
-        <p class="contact-card__microcopy">{microcopy}</p>
-        <p class="contact-card__status" data-lead-status tabindex="-1" hidden></p>
-      </form>
-      <div data-lead-success hidden>{successText}</div>
+      </div>
     </div>
   </div>
 </section>
@@ -89,7 +141,11 @@ const {
     border: 1px solid rgb(255 255 255 / 14%);
     border-radius: 28px;
     background:
-      radial-gradient(circle at 18% 18%, rgb(255 255 255 / 7%), transparent 26rem),
+      radial-gradient(
+        circle at 18% 18%,
+        rgb(255 255 255 / 7%),
+        transparent 26rem
+      ),
       rgb(255 255 255 / 4%);
   }
 
@@ -162,11 +218,16 @@ const {
     background: rgb(255 255 255 / 6%);
   }
 
-  .contact-card__form {
-    display: grid;
+  .contact-card__form-wrapper {
+    position: relative;
     width: 100%;
     max-width: 520px;
     justify-self: end;
+  }
+
+  .contact-card__form {
+    display: grid;
+    width: 100%;
     gap: 20px;
     padding: 36px;
     border: 1px solid rgb(255 255 255 / 36%);
@@ -174,6 +235,13 @@ const {
     color: var(--color-text, #152028);
     background: #ffffff;
     box-shadow: 7px 7px 0 var(--color-accent, #e76525);
+    transition: opacity 0.3s ease, filter 0.3s ease;
+  }
+
+  .contact-card__form-wrapper:has(.contact-card__success:not([hidden])) .contact-card__form {
+    opacity: 0.12;
+    pointer-events: none;
+    user-select: none;
   }
 
   .contact-card__desktop-phone {
@@ -191,12 +259,32 @@ const {
     border-radius: 12px;
     color: var(--color-text, #152028);
     background: #ffffff;
+    font-size: 16px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .contact-card__desktop-phone input[aria-invalid="true"] {
+    border-color: #b42318;
+    background: #fff8f7;
+    outline: 3px solid rgba(180, 35, 24, 0.16);
   }
 
   .contact-card__desktop-phone input:focus-visible {
     border-color: var(--color-accent, #e76525);
     outline: 3px solid rgb(231 101 37 / 24%);
     outline-offset: 1px;
+  }
+
+  .contact-card__error {
+    margin: 0;
+    color: #b42318;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .contact-card__error[hidden] {
+    display: none !important;
   }
 
   .contact-card__dialpad {
@@ -227,6 +315,7 @@ const {
     background: var(--color-accent, #e76525);
     cursor: pointer;
     font-weight: 800;
+    font-size: 16px;
     transition: background-color 180ms ease, transform 180ms ease;
   }
 
@@ -250,12 +339,80 @@ const {
     background: var(--color-accent-light, #ffefe5);
   }
 
-  [data-lead-success] {
-    grid-column: 1 / -1;
-    padding: 20px;
-    border-radius: 14px;
+  .contact-card__success {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 36px 24px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    box-shadow: 7px 7px 0 var(--color-accent, #e76525);
+    border: 1px solid rgb(255 255 255 / 60%);
+    animation: successFadeIn 0.4s ease-out forwards;
     color: var(--color-text, #152028);
-    background: var(--color-accent-light, #ffefe5);
+  }
+
+  .contact-card__success[hidden] {
+    display: none !important;
+  }
+
+  .contact-card__success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e76525, #ff985c);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px rgba(231, 101, 37, 0.3);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  .contact-card__success-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .contact-card__success h3 {
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0 0 10px;
+    font-family: var(--font-heading, sans-serif);
+    color: var(--color-text, #152028);
+  }
+
+  .contact-card__success p {
+    font-size: 15px;
+    color: var(--color-text-muted, #60717d);
+    line-height: 1.55;
+    max-width: 340px;
+    margin: 0;
+  }
+
+  @keyframes successFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes popIn {
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 
   @media (max-width: 820px) {
@@ -271,6 +428,10 @@ const {
 
     .contact-card__copy {
       max-width: 620px;
+    }
+
+    .contact-card__form-wrapper {
+      justify-self: start;
     }
 
     .contact-card__form {

@@ -61,19 +61,72 @@ const initGlobalQuizLinks = () => {
   });
 };
 
-const normalizePhone = (raw: string) => {
-  const digits = raw.replace(/\D/g, "").replace(/^8/, "7");
-  const body = digits.startsWith("7") ? digits.slice(1, 11) : digits.slice(0, 10);
+const extractPhoneDigits = (raw: string): string => {
+  const digits = raw.replace(/\D/g, "");
+  if (digits.startsWith("78") || digits.startsWith("77")) {
+    return digits.slice(2, 12);
+  }
+  if (digits.startsWith("7") || digits.startsWith("8")) {
+    return digits.slice(1, 11);
+  }
+  return digits.slice(0, 10);
+};
+
+const normalizePhone = (raw: string): string => {
+  const body = extractPhoneDigits(raw);
   return body ? `+7${body}` : "";
 };
 
-const formatPhone = (digits: string) => {
+const formatPhone = (digits: string): string => {
+  if (!digits) return "";
   let res = "+7";
   if (digits.length > 0) res += " (" + digits.slice(0, 3);
   if (digits.length >= 4) res += ") " + digits.slice(3, 6);
   if (digits.length >= 7) res += "-" + digits.slice(6, 8);
   if (digits.length >= 9) res += "-" + digits.slice(8, 10);
   return res;
+};
+
+const isPhoneValid = (phone: string): boolean => {
+  return /^\+7\d{10}$/.test(phone);
+};
+
+const applyPhoneMask = (
+  input: HTMLInputElement,
+  onUpdate?: (normalized: string, formatted: string, digits: string) => void
+) => {
+  const handleInput = () => {
+    const raw = input.value;
+    const digits = extractPhoneDigits(raw);
+    const formatted = digits ? formatPhone(digits) : (raw.startsWith("+") && raw.length > 2 ? "+7 (" : "");
+    const normalized = digits ? `+7${digits}` : "";
+    input.value = formatted;
+    if (digits.length === 10) {
+      input.removeAttribute("aria-invalid");
+    }
+    onUpdate?.(normalized, formatted, digits);
+  };
+
+  input.addEventListener("input", handleInput);
+  input.addEventListener("focus", () => {
+    if (!input.value.trim()) {
+      input.value = "+7 (";
+    }
+  });
+  input.addEventListener("blur", () => {
+    if (input.value === "+7 (" || input.value === "+7" || input.value === "+7 " || input.value === "+7 ()") {
+      input.value = "";
+      input.removeAttribute("aria-invalid");
+      onUpdate?.("", "", "");
+    } else {
+      const digits = extractPhoneDigits(input.value);
+      if (digits.length > 0 && digits.length < 10) {
+        input.setAttribute("aria-invalid", "true");
+      } else if (digits.length === 10) {
+        input.removeAttribute("aria-invalid");
+      }
+    }
+  });
 };
 
 interface QuizState {
@@ -271,15 +324,6 @@ const initLeadQuiz = () => {
       renderValues();
     };
 
-    const updatePhone = (raw: string) => {
-      const digits = raw.replace(/\D/g, "");
-      const body = digits.startsWith("7") || digits.startsWith("8") ? digits.slice(1, 11) : digits.slice(0, 10);
-      state.phoneDigits = body;
-      state.values.set("phone", body ? `+7${body}` : "");
-      state.values.set("__phoneDisplay", body ? formatPhone(body) : (raw.startsWith("+") ? raw : ""));
-      renderPhone();
-    };
-
     const mirrorFiles = (source: HTMLInputElement) => {
       views.forEach((view) => {
         if (!view.fileInput || view.fileInput === source) return;
@@ -325,10 +369,28 @@ const initLeadQuiz = () => {
         }
       };
 
+      if (view.phoneInput) {
+        applyPhoneMask(view.phoneInput, (normalized, formatted, digits) => {
+          state.phoneDigits = digits;
+          state.values.set("phone", normalized);
+          state.values.set("__phoneDisplay", formatted);
+          renderPhone();
+          if (digits.length === 10) {
+            views.forEach((v) => {
+              v.phoneInput?.removeAttribute("aria-invalid");
+              const err = v.form.querySelector<HTMLElement>("[data-contact-error]");
+              if (err && v.form.querySelector<HTMLInputElement>('[name="consent"]')?.checked) {
+                err.hidden = true;
+              }
+            });
+          }
+        });
+      }
+
       view.form.addEventListener("input", (event) => {
         const target = event.target;
         if (target instanceof HTMLInputElement && target.matches("[data-phone-input]")) {
-          updatePhone(target.value);
+          // Handled by applyPhoneMask
         } else if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
           updateStateFromControl(target);
         }
@@ -373,6 +435,15 @@ const initLeadQuiz = () => {
         state.values.set("phone", state.phoneDigits ? `+7${state.phoneDigits}` : "");
         state.values.set("__phoneDisplay", state.phoneDigits ? formatPhone(state.phoneDigits) : "");
         renderPhone();
+        if (state.phoneDigits.length === 10) {
+          views.forEach((v) => {
+            v.phoneInput?.removeAttribute("aria-invalid");
+            const err = v.form.querySelector<HTMLElement>("[data-contact-error]");
+            if (err && v.form.querySelector<HTMLInputElement>('[name="consent"]')?.checked) {
+              err.hidden = true;
+            }
+          });
+        }
       });
 
       view.form.addEventListener("formdata", (event) => {
@@ -385,15 +456,34 @@ const initLeadQuiz = () => {
         const consent = view.form.querySelector<HTMLInputElement>('[name="consent"]');
         const contactError = view.form.querySelector<HTMLElement>("[data-contact-error]");
         const phone = String(state.values.get("phone") ?? "");
-        if (!phone.match(/^\+7\d{10}$/) || !consent?.checked) {
+        const validPhone = isPhoneValid(phone);
+        const validConsent = Boolean(consent?.checked);
+
+        if (!validPhone || !validConsent) {
           event.preventDefault();
-          if (contactError) contactError.hidden = false;
-          (!phone ? view.phoneInput || view.dialpad : consent)?.focus();
+          if (contactError) {
+            contactError.hidden = false;
+            if (!validPhone && !validConsent) {
+              contactError.textContent = "Пожалуйста, введите корректный номер телефона (10 цифр) и подтвердите согласие.";
+            } else if (!validPhone) {
+              contactError.textContent = "Пожалуйста, введите корректный номер телефона из 10 цифр.";
+            } else {
+              contactError.textContent = "Пожалуйста, подтвердите согласие на обработку персональных данных.";
+            }
+          }
+          views.forEach((v) => {
+            if (v.phoneInput) {
+              v.phoneInput.setAttribute("aria-invalid", validPhone ? "false" : "true");
+            }
+          });
+          (!validPhone ? (view.phoneInput && view.phoneInput.offsetParent ? view.phoneInput : view.dialpad) : consent)?.focus();
           return;
         }
+
         views.forEach((item) => {
           const error = item.form.querySelector<HTMLElement>("[data-contact-error]");
           if (error) error.hidden = true;
+          item.phoneInput?.removeAttribute("aria-invalid");
         });
       });
     });
@@ -450,8 +540,16 @@ const initLeadQuiz = () => {
     const syncSuccess = () => {
       if (state.submitted || !successNodes.some((node) => !node.hidden)) return;
       state.submitted = true;
-      views.forEach((view) => { view.form.hidden = true; });
-      successNodes.forEach((node) => { node.hidden = false; });
+      views.forEach((view) => {
+        view.form.hidden = true;
+        view.form.style.display = "none";
+        if (view.topline) view.topline.style.display = "none";
+        if (view.progressRoot) view.progressRoot.style.display = "none";
+      });
+      successNodes.forEach((node) => {
+        node.hidden = false;
+        node.style.display = "flex";
+      });
     };
     successNodes.forEach((node) => {
       new MutationObserver(syncSuccess).observe(node, { attributes: true, attributeFilter: ["hidden"] });
@@ -470,28 +568,67 @@ const initFinalForms = () => {
     const phoneInput = root.querySelector<HTMLInputElement>("[data-final-phone-input]");
     const dialpad = root.querySelector<HTMLElement>("[data-final-dialpad]");
     const display = root.querySelector<HTMLOutputElement>("[data-final-dialpad-display]");
+    const contactError = root.querySelector<HTMLElement>("[data-contact-error]");
     let digits = "";
 
-    phoneInput?.addEventListener("input", () => {
-      if (phoneValue) phoneValue.value = normalizePhone(phoneInput.value);
-    });
+    if (phoneInput) {
+      applyPhoneMask(phoneInput, (normalized, _formatted, phoneDigits) => {
+        if (phoneValue) phoneValue.value = normalized;
+        digits = phoneDigits;
+        if (display) display.value = phoneDigits ? `+7 ${phoneDigits}` : "+7";
+        if (phoneDigits.length === 10) {
+          phoneInput.removeAttribute("aria-invalid");
+          const consent = form?.querySelector<HTMLInputElement>('[name="consent"]');
+          if (consent?.checked && contactError) contactError.hidden = true;
+        }
+      });
+    }
+
     dialpad?.addEventListener("click", (event) => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>("button");
       if (!button) return;
       if (button.dataset.digit && digits.length < 10) digits += button.dataset.digit;
       if (button.hasAttribute("data-backspace")) digits = digits.slice(0, -1);
       if (button.hasAttribute("data-clear")) digits = "";
-      if (phoneValue) phoneValue.value = digits ? `+7${digits}` : "";
-      if (display) display.value = `+7 ${digits}`;
+      const normalized = digits ? `+7${digits}` : "";
+      const formatted = digits ? formatPhone(digits) : "";
+      if (phoneValue) phoneValue.value = normalized;
+      if (phoneInput) phoneInput.value = formatted;
+      if (display) display.value = digits ? `+7 ${digits}` : "+7";
+      if (digits.length === 10) {
+        phoneInput?.removeAttribute("aria-invalid");
+        const consent = form?.querySelector<HTMLInputElement>('[name="consent"]');
+        if (consent?.checked && contactError) contactError.hidden = true;
+      }
     });
+
     form?.addEventListener("submit", (event) => {
       const consent = form.querySelector<HTMLInputElement>('[name="consent"]');
-      if (!phoneValue?.value.match(/^\+7\d{10}$/) || !consent?.checked || !form.checkValidity()) {
+      const phone = phoneValue?.value || (phoneInput ? normalizePhone(phoneInput.value) : "");
+      const validPhone = isPhoneValid(phone);
+      const validConsent = Boolean(consent?.checked);
+
+      if (!validPhone || !validConsent) {
         event.preventDefault();
-        form.reportValidity();
-        const phoneControl = phoneInput && phoneInput.offsetParent !== null ? phoneInput : dialpad;
-        phoneControl?.focus();
+        if (contactError) {
+          contactError.hidden = false;
+          if (!validPhone && !validConsent) {
+            contactError.textContent = "Пожалуйста, введите корректный номер телефона (10 цифр) и подтвердите согласие.";
+          } else if (!validPhone) {
+            contactError.textContent = "Пожалуйста, введите корректный номер телефона из 10 цифр.";
+          } else {
+            contactError.textContent = "Пожалуйста, подтвердите согласие на обработку персональных данных.";
+          }
+        }
+        if (phoneInput) {
+          phoneInput.setAttribute("aria-invalid", validPhone ? "false" : "true");
+        }
+        (!validPhone ? (phoneInput && phoneInput.offsetParent !== null ? phoneInput : dialpad) : consent)?.focus();
+        return;
       }
+
+      if (phoneInput) phoneInput.removeAttribute("aria-invalid");
+      if (contactError) contactError.hidden = true;
     });
   });
 };
@@ -509,9 +646,19 @@ const initLocalFormFallback = () => {
       const data = Object.fromEntries(formData.entries());
       console.log("=== Quiz Form Data ===", data);
       
-      const success = form.closest("[data-lead-root]")?.querySelector<HTMLElement>("[data-lead-success]");
+      const root = form.closest("[data-lead-root]");
+      const success = root?.querySelector<HTMLElement>("[data-lead-success]");
       if (success) {
+        if (form.classList.contains("lead-quiz-form__form")) {
+          form.hidden = true;
+          form.style.display = "none";
+          const topline = root?.querySelector<HTMLElement>(".lead-quiz-form__topline");
+          const progress = root?.querySelector<HTMLElement>(".lead-quiz-form__progress");
+          if (topline) topline.style.display = "none";
+          if (progress) progress.style.display = "none";
+        }
         success.hidden = false;
+        success.style.display = "flex";
         success.focus();
       }
     });

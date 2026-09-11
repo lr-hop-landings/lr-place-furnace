@@ -2,7 +2,10 @@ import { chromium } from "playwright";
 import { mkdir, readFile } from "node:fs/promises";
 
 const baseURL = process.env.SITE_URL ?? "http://127.0.0.1:4321";
-const route = new URL("/ustanovka-metallicheskih-pechey/", baseURL).href;
+const routes = [
+  "/",
+  "/remont-i-restavratsiya-pechey/",
+];
 const mode = process.argv[2] ?? "content";
 const failures = [];
 
@@ -12,11 +15,33 @@ function check(condition, message) {
 
 const browser = await chromium.launch({ headless: true });
 
-async function openPage(width, height) {
+async function openPage(width, height, route = routes[0]) {
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
-  await page.goto(route, { waitUntil: "networkidle" });
+  await page.goto(new URL(route, baseURL).href, { waitUntil: "networkidle" });
   await page.locator(".hero-visual").waitFor({ state: "visible" });
   return page;
+}
+
+async function verifyTooltipBounds(page, context) {
+  const frameLocator = page.locator(".hero-visual__media-frame");
+  const triggers = page.locator(".hero-visual__callout summary");
+  const tooltips = page.locator(".hero-visual__tooltip");
+
+  for (let index = 0; index < await triggers.count(); index += 1) {
+    await triggers.nth(index).click();
+    const tooltip = tooltips.nth(index);
+    await tooltip.waitFor({ state: "visible" });
+    const frame = await frameLocator.boundingBox();
+    const bounds = await tooltip.boundingBox();
+    check(
+      frame && bounds &&
+        bounds.x >= frame.x - 1 &&
+        bounds.y >= frame.y - 1 &&
+        bounds.x + bounds.width <= frame.x + frame.width + 1 &&
+        bounds.y + bounds.height <= frame.y + frame.height + 1,
+      `${context} tooltip ${index + 1} must stay inside the hero image (frame ${JSON.stringify(frame)}, tooltip ${JSON.stringify(bounds)})`,
+    );
+  }
 }
 
 async function verifyContent() {
@@ -29,12 +54,20 @@ async function verifyContent() {
   const image = page.locator(".hero-visual__media img");
   const facts = page.locator(".hero-visual__pills li");
   const callouts = page.locator(".hero-visual__callout");
+  const tooltipTriggers = page.locator(".hero-visual__callout summary");
+  const tooltips = page.locator(".hero-visual__tooltip");
+  const mediaFrameCallouts = page.locator(".hero-visual__media-frame > .hero-visual__callouts");
   const imageCount = await image.count();
 
   check((await cta.getAttribute("href")) === "#estimate-quiz", "CTA target changed");
   check((await phone.getAttribute("href")) === "tel:+78123444444", "phone target changed");
   check((await facts.count()) === 4, "hero must keep all four benefit facts");
   check((await callouts.count()) === 3, "hero must render three technical callouts");
+  check((await tooltipTriggers.count()) === 3, "hero callouts must use three tooltip triggers");
+  check((await tooltips.count()) === 3, "hero callouts must include three tooltip panels");
+  check((await page.locator(".hero-visual__media.glightbox").count()) === 0, "hero image must not open in a lightbox");
+  check((await mediaFrameCallouts.count()) === 1, "technical callouts must be part of the image frame");
+  await verifyTooltipBounds(page, "desktop installation");
   check(imageCount === 1, "generated hero image is missing");
   if (imageCount === 1) {
     check((await image.getAttribute("src")) === "/images/metal-stove-installation-hero.webp", "generated hero image is not wired");
@@ -53,6 +86,16 @@ async function verifyContent() {
   const componentSource = await readFile("src/components/hero/hero-visual-price-01.astro", "utf8");
   check(componentSource.includes("hero-visual__blueprint"), "blueprint fallback branch was removed");
   await page.close();
+
+  const repairPage = await openPage(1440, 1000, routes[1]);
+  check((await repairPage.locator(".hero-visual__media-frame > .hero-visual__callouts").count()) === 1, "repair hero callouts must be part of the image frame");
+  check((await repairPage.locator(".hero-visual__callout").count()) === 3, "repair hero must render three technical callouts");
+  await verifyTooltipBounds(repairPage, "desktop repair");
+  await repairPage.close();
+
+  const repairMobilePage = await openPage(390, 844, routes[1]);
+  await verifyTooltipBounds(repairMobilePage, "mobile repair");
+  await repairMobilePage.close();
 }
 
 await verifyContent();
@@ -95,6 +138,7 @@ async function verifyLayout() {
   check(mobileButton && mobileButton.y + mobileButton.height <= 844, "mobile CTA must fit within the first viewport");
   check(mobileImageFit === "cover", "mobile image must crop with object-fit cover");
   check(mobileOverflow <= 1, `mobile page overflows horizontally by ${mobileOverflow}px`);
+  await verifyTooltipBounds(mobile, "mobile installation");
 
   await mobile.emulateMedia({ reducedMotion: "reduce" });
   await mobile.reload({ waitUntil: "networkidle" });

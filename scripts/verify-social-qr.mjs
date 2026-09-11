@@ -51,7 +51,7 @@ const checks = [
   ],
   [
     "current QR assets remain in page data",
-    ["/qr/vk.svg", "/qr/telegram.svg", "/qr/max.svg"].every((value) => page.includes(value)),
+    ["/qr/vk.png", "/qr/telegram.png", "/qr/max.png"].every((value) => page.includes(value)),
   ],
   [
     "current social links remain in page data",

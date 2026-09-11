@@ -58,11 +58,7 @@ const totalSteps = steps.length + 1;
     data-hop-lead-form
     novalidate
   >
-    <input
-      type="hidden"
-      name="quiz_service"
-      value={service}
-    />
+    <input type="hidden" name="quiz_service" value={service} />
     <input type="hidden" name="phone" data-phone-value value="" />
 
     {
@@ -84,7 +80,11 @@ const totalSteps = steps.length + 1;
                   <input
                     id={optionId}
                     type={isMultiple ? "checkbox" : "radio"}
-                    name={step.name ?? stepNames[stepIndex] ?? `step_${stepIndex + 1}`}
+                    name={
+                      step.name ??
+                      stepNames[stepIndex] ??
+                      `step_${stepIndex + 1}`
+                    }
                     value={option}
                   />
                   <span>{option}</span>
@@ -203,7 +203,7 @@ const totalSteps = steps.length + 1;
             </span>
           </div>
         </div>
-        <p>Подбираем оптимальное решение</p>
+        <p>Готовим расчёт</p>
         <span class="lead-quiz-form__calc-dots"><i></i><i></i><i></i></span>
       </div>
     </fieldset>
@@ -213,9 +213,8 @@ const totalSteps = steps.length + 1;
       data-quiz-step
     >
       <div class="lead-quiz-form__final-header">
-        <div class="lead-quiz-form__final-emoji" aria-hidden="true">📱</div>
         <legend>Куда отправить результат?</legend>
-        <p>Оставьте номер — мы перезвоним<br />и обсудим детали</p>
+        <p>Оставьте номер — мы перезвоним и обсудим детали</p>
       </div>
       <div class="lead-quiz-form__fields lead-quiz-form__fields--final">
         <label class="lead-quiz-form__desktop-phone" for={`${prefix}-phone`}>
@@ -257,6 +256,7 @@ const totalSteps = steps.length + 1;
             type="checkbox"
             name="consent"
             value="Да"
+            checked
             required
           />
           <span>{privacyText}</span>
@@ -272,10 +272,6 @@ const totalSteps = steps.length + 1;
       <button type="button" data-quiz-next>Далее</button>
       <button type="submit" data-quiz-submit hidden>{submitText}</button>
     </div>
-    <p class="lead-quiz-form__privacy">
-      Расчёт по фотографиям предварительный. Точная смета — после получения
-      необходимых параметров.
-    </p>
   </form>
 
   <div class="lead-quiz-form__status" data-lead-status tabindex="-1" hidden>
@@ -297,7 +293,7 @@ const totalSteps = steps.length + 1;
       </svg>
     </div>
     <h3>Отлично, заявка принята!</h3>
-    <p>Мы свяжемся с вами в ближайшее время выбранным способом связи</p>
+    <p>Перезвоним или напишем выбранным способом.</p>
   </div>
 </div>
 
@@ -610,9 +606,13 @@ const totalSteps = steps.length + 1;
     padding-top: 16px;
   }
 
-  .lead-quiz-form__actions [data-quiz-next],
-  .lead-quiz-form__actions [data-quiz-submit] {
+  .lead-quiz-form__actions [data-quiz-next] {
     margin-left: auto;
+  }
+
+  .lead-quiz-form__actions [data-quiz-submit] {
+    width: 100%;
+    margin-left: 0;
   }
 
   .lead-quiz-form__actions button {
@@ -641,20 +641,18 @@ const totalSteps = steps.length + 1;
 
   /* Final Step */
   .lead-quiz-form__step--final {
-    text-align: center;
+    text-align: left;
     padding-top: 4px;
   }
 
-  .lead-quiz-form__final-emoji {
-    font-size: 36px;
-    line-height: 1;
-    margin-bottom: 8px;
-    animation: quizStepIn 0.5s ease-out;
+  .lead-quiz-form__final-header {
+    padding-right: 40px;
   }
 
   .lead-quiz-form__final-header legend {
     font-size: 26px;
     margin-bottom: 8px;
+    text-align: left;
   }
 
   .lead-quiz-form__final-header p {
@@ -662,27 +660,42 @@ const totalSteps = steps.length + 1;
     font-size: 15px;
     margin-bottom: 24px;
     line-height: 1.5;
+    text-align: left;
   }
 
   .lead-quiz-form__fields--final {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    max-width: 360px;
-    margin: 0 auto;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    gap: 14px;
+  }
+
+  .lead-quiz-form__desktop-phone {
+    width: 100%;
+    display: block;
   }
 
   .lead-quiz-form__fields--final input[type="tel"] {
-    font-size: 24px;
-    font-weight: 800;
-    text-align: center;
-    letter-spacing: 0.05em;
-    padding: 16px;
-    height: 64px;
-    border-radius: 16px;
+    width: 100%;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: left;
+    letter-spacing: 0.03em;
+    padding: 14px 18px;
+    height: 56px;
+    border-radius: 14px;
     border: 2px solid var(--color-border, #d6dee3);
     transition: all 0.3s ease;
     background: var(--color-background, #f6f4ef);
+  }
+
+  .lead-quiz-form__fields--final input[type="tel"][aria-invalid="true"] {
+    border-color: #b42318;
+    background: #fff8f7;
+    box-shadow: 0 0 0 4px rgba(180, 35, 24, 0.15);
   }
 
   .lead-quiz-form__fields--final input[type="tel"]:focus {
@@ -699,8 +712,20 @@ const totalSteps = steps.length + 1;
     color: var(--color-text, #152028);
   }
 
+  .lead-quiz-form [hidden],
+  .lead-quiz-form__form[hidden],
+  .lead-quiz-form__status[hidden],
   .lead-quiz-form__success[hidden] {
-    display: none;
+    display: none !important;
+  }
+
+  .lead-quiz-form:has(.lead-quiz-form__success:not([hidden]))
+    .lead-quiz-form__topline,
+  .lead-quiz-form:has(.lead-quiz-form__success:not([hidden]))
+    .lead-quiz-form__progress,
+  .lead-quiz-form:has(.lead-quiz-form__success:not([hidden]))
+    .lead-quiz-form__form {
+    display: none !important;
   }
 
   .lead-quiz-form__success {
@@ -710,7 +735,10 @@ const totalSteps = steps.length + 1;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 50px 20px 40px;
+    flex: 1;
+    height: 100%;
+    margin: auto 0;
+    padding: 40px 20px;
     overflow: hidden;
     animation: successFadeIn 0.5s ease-out forwards;
   }
@@ -1026,6 +1054,8 @@ const totalSteps = steps.length + 1;
 
   @media (max-width: 760px) {
     .lead-quiz-form {
+      height: auto;
+      min-height: 480px;
       padding: 20px 16px;
       border-radius: 18px;
     }

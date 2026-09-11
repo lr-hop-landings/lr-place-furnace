@@ -25,25 +25,31 @@ const resolvedEyebrow = eyebrow ?? `Монтаж под ключ · ${stepCount}
       {subline && <p class="features-grid__subline">{subline}</p>}
     </header>
 
-    <ol class="features-grid__route">
-      {
-        items.map((item, index) => (
-          <li
-            class:list={[
-              "features-grid__card",
-              { "features-grid__card--milestone": index === 3 || index === 7 },
-            ]}
-            data-route-step={index + 1}
-          >
-            <span class="features-grid__number" aria-hidden="true">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </li>
-        ))
-      }
-    </ol>
+    <div
+      class="features-grid__slider swiper"
+      data-swiper-options={`{"slidesPerView":"auto", "breakpoints":{"641":{"enabled":false}}}`}
+    >
+      <ol class="features-grid__route swiper-wrapper">
+        {
+          items.map((item, index) => (
+            <li
+              class:list={[
+                "features-grid__card swiper-slide",
+                { "features-grid__card--milestone": index === 3 || index === 7 },
+              ]}
+              data-route-step={index + 1}
+            >
+              <span class="features-grid__number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="features-grid__pagination swiper-pagination"></div>
+    </div>
   </div>
 </section>
 
@@ -102,6 +108,10 @@ const resolvedEyebrow = eyebrow ?? `Монтаж под ключ · ${stepCount}
     line-height: var(--leading-relaxed, 1.65);
   }
 
+  .features-grid__slider {
+    position: relative;
+  }
+
   .features-grid__route {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
@@ -150,7 +160,6 @@ const resolvedEyebrow = eyebrow ?? `Монтаж под ключ · ${stepCount}
   .features-grid__card:nth-child(8) {
     &:hover {
       border-color: #e76525;
-      /* box-shadow: 4px 4px 0 0 #e76525; */
       & > h3 {
         color: var(--color-accent);
       }
@@ -206,7 +215,29 @@ const resolvedEyebrow = eyebrow ?? `Монтаж под ключ · ${stepCount}
     line-height: 1.55;
   }
 
-  @media (max-width: 1023px) {
+  .features-grid__pagination {
+    display: none;
+  }
+
+  @media (min-width: 641px) {
+    .features-grid__slider.swiper {
+      overflow: visible;
+    }
+
+    .features-grid__route.swiper-wrapper {
+      display: grid !important;
+      transform: none !important;
+      box-sizing: border-box;
+      width: 100% !important;
+    }
+
+    .features-grid__card.swiper-slide {
+      height: auto;
+      width: auto !important;
+    }
+  }
+
+  @media (max-width: 1023px) and (min-width: 641px) {
     .features-grid__route {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -237,15 +268,45 @@ const resolvedEyebrow = eyebrow ?? `Монтаж под ключ · ${stepCount}
       line-height: 1.6;
     }
 
-    .features-grid__route {
-      grid-template-columns: 1fr;
-      gap: 1px;
-      margin-top: 40px;
-      padding-left: 0;
+    .features-grid__slider {
+      margin-top: 32px;
+      margin-left: calc(-1 * var(--space-4, 16px));
+      margin-right: calc(-1 * var(--space-4, 16px));
+      padding-left: var(--space-4, 16px);
+      padding-right: var(--space-4, 16px);
+      padding-bottom: 28px;
+      overflow: hidden;
     }
 
-    .features-grid__card {
+    .features-grid__route.swiper-wrapper {
+      display: flex !important;
+      margin: 0;
+      background: none;
+      padding: 8px 0;
+      border-radius: 0;
+      list-style: none;
+    }
+
+    .features-grid__card.swiper-slide {
+      width: 270px !important;
+      max-width: 80vw;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      min-height: 200px;
       padding: 24px 20px;
+      border-radius: 16px;
+      background: var(--color-surface, #ffffff);
+      border: 2px solid var(--color-primary-dark, #0b1f33);
+      box-shadow: 4px 4px 0 var(--color-primary-dark, #0b1f33);
+      box-sizing: border-box;
+      margin-right: 16px;
+    }
+
+    .features-grid__card--milestone.swiper-slide {
+      border-color: var(--color-accent, #e76525);
+      box-shadow: 4px 4px 0 var(--color-accent, #e76525);
     }
 
     .features-grid__number {
@@ -254,12 +315,39 @@ const resolvedEyebrow = eyebrow ?? `Монтаж под ключ · ${stepCount}
 
     .features-grid h3 {
       margin-bottom: var(--space-2, 8px);
-      font-size: 1rem;
+      font-size: 1.1rem;
     }
 
     .features-grid__card > p {
-      font-size: 0.82rem;
+      font-size: 0.88rem;
       line-height: 1.5;
+    }
+
+    .features-grid__pagination {
+      position: absolute !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      width: 100% !important;
+    }
+
+    .features-grid__pagination :global(.swiper-pagination-bullet) {
+      width: 8px;
+      height: 8px;
+      margin: 0 !important;
+      border-radius: 4px;
+      background: #c2cbd1;
+      opacity: 1;
+      transition: all 0.25s ease;
+    }
+
+    .features-grid__pagination :global(.swiper-pagination-bullet-active) {
+      width: 24px;
+      background: var(--color-accent, #e76525);
     }
   }
 </style>

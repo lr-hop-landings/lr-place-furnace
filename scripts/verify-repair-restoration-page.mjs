@@ -59,16 +59,15 @@ for (const variant of variants) {
   await page.waitForTimeout(250);
   const metrics = await page.evaluate(() => {
     const root = document.documentElement;
-    const labels = Array.from(document.querySelectorAll(".before-after__stage")).map((node) => node.textContent?.trim());
     const services = Array.from(document.querySelectorAll('input[name="quiz_service"]')).map((input) => input.value);
+    const caseSlider = document.querySelector("[data-real-case-slider] .swiper");
 
     return {
       title: document.title,
       h1: Array.from(document.querySelectorAll("h1")).map((node) => node.textContent?.replace(/\s+/g, " ").trim()),
       sections: document.querySelectorAll("main > section").length,
-      caseCards: document.querySelectorAll(".before-after__case").length,
-      beforeLabels: labels.filter((label) => label === "До").length,
-      afterLabels: labels.filter((label) => label === "После").length,
+      caseCards: document.querySelectorAll(".cases-emergency__card").length,
+      caseSliderInitialized: caseSlider?.classList.contains("swiper-initialized") ?? false,
       missingAlt: Array.from(document.images).filter((image) => !image.hasAttribute("alt")).length,
       horizontalOverflow: root.scrollWidth - root.clientWidth,
       services,
@@ -99,8 +98,8 @@ const failures = reports.flatMap((report) => {
   if (report.status !== 200) issues.push(`HTTP ${report.status}`);
   if (report.h1.length !== 1) issues.push(`expected one H1, got ${report.h1.length}`);
   if (report.sections < 10) issues.push(`expected at least 10 sections, got ${report.sections}`);
-  if (report.caseCards < 2) issues.push(`expected at least two case cards, got ${report.caseCards}`);
-  if (report.beforeLabels !== report.afterLabels || report.beforeLabels < 2) issues.push("before/after labels are incomplete");
+  if (report.caseCards !== 9) issues.push(`expected nine case cards, got ${report.caseCards}`);
+  if (!report.caseSliderInitialized) issues.push("case slider is not initialized");
   if (report.missingAlt > 0) issues.push(`${report.missingAlt} images without alt`);
   if (report.horizontalOverflow > 1) issues.push(`horizontal overflow: ${report.horizontalOverflow}px`);
   if (report.consoleErrors.length > 0) issues.push(`${report.consoleErrors.length} console errors`);
