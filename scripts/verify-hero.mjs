@@ -61,7 +61,7 @@ async function verifyContent() {
 
   check((await cta.getAttribute("href")) === "#estimate-quiz", "CTA target changed");
   check((await phone.getAttribute("href")) === "tel:+78123444444", "phone target changed");
-  check((await facts.count()) === 4, "hero must keep all four benefit facts");
+  check((await facts.count()) === 3, "hero must keep all three benefit facts");
   check((await callouts.count()) === 3, "hero must render three technical callouts");
   check((await tooltipTriggers.count()) === 3, "hero callouts must use three tooltip triggers");
   check((await tooltips.count()) === 3, "hero callouts must include three tooltip panels");
@@ -88,6 +88,12 @@ async function verifyContent() {
   await page.close();
 
   const repairPage = await openPage(1440, 1000, routes[1]);
+  const repairImage = repairPage.locator(".hero-visual__media img");
+  check((await repairImage.getAttribute("src")) === "/images/repair-restoration-hero-worker.webp", "repair-process hero image is not wired");
+  check(
+    (await repairImage.getAttribute("alt")) === "Мастер ремонтирует кирпичную кладку вокруг металлической печи",
+    "repair-process hero alt text changed",
+  );
   check((await repairPage.locator(".hero-visual__media-frame > .hero-visual__callouts").count()) === 1, "repair hero callouts must be part of the image frame");
   check((await repairPage.locator(".hero-visual__callout").count()) === 3, "repair hero must render three technical callouts");
   await verifyTooltipBounds(repairPage, "desktop repair");
@@ -151,7 +157,7 @@ async function verifyLayout() {
     const edgePhone = await openPage(width, 844);
     const overflow = await edgePhone.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     check(overflow <= 1, `${width}px page overflows horizontally by ${overflow}px`);
-    check((await edgePhone.locator(".hero-visual__pills li").count()) === 4, `${width}px viewport lost a benefit fact`);
+    check((await edgePhone.locator(".hero-visual__pills li").count()) === 3, `${width}px viewport lost a benefit fact`);
     await edgePhone.close();
   }
 }
